@@ -1,4 +1,4 @@
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { FileTextOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
@@ -32,6 +32,11 @@ export default function DashboardPage() {
             <Descriptions.Item label="邮箱">{user?.email || '-'}</Descriptions.Item>
             <Descriptions.Item label="部门">{user?.department || '-'}</Descriptions.Item>
           </Descriptions>
+        </Card>
+        <Card title="Documents" style={{ maxWidth: 720, marginTop: 16 }}>
+          <Button type="primary" icon={<FileTextOutlined />} onClick={() => navigate('/documents')}>
+            Manage documents
+          </Button>
         </Card>
       </main>
     </Layout>

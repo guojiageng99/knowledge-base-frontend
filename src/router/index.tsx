@@ -4,6 +4,9 @@ import ProtectedRoute from './ProtectedRoute';
 
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
+const DocumentsPage = lazy(() => import('@/pages/DocumentsPage'));
+const DocumentEditorPage = lazy(() => import('@/pages/DocumentEditorPage'));
+const DocumentDetailPage = lazy(() => import('@/pages/DocumentDetailPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -12,6 +15,22 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <ProtectedRoute><Suspense fallback={loading}><DashboardPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/documents',
+    element: <ProtectedRoute><Suspense fallback={loading}><DocumentsPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/documents/create',
+    element: <ProtectedRoute><Suspense fallback={loading}><DocumentEditorPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/documents/:id',
+    element: <ProtectedRoute><Suspense fallback={loading}><DocumentDetailPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/documents/:id/edit',
+    element: <ProtectedRoute><Suspense fallback={loading}><DocumentEditorPage /></Suspense></ProtectedRoute>,
   },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

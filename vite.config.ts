@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import http from 'node:http';
 import path from 'node:path';
 
-function authDevelopmentProxy() {
+function apiDevelopmentProxy() {
   return {
     name: 'auth-development-proxy',
     configureServer(server: { middlewares: { use: (path: string, handler: (request: http.IncomingMessage & { originalUrl?: string }, response: http.ServerResponse) => void) => void } }) {
@@ -11,10 +11,13 @@ function authDevelopmentProxy() {
         const requestPath = request.originalUrl ?? request.url ?? '/';
         const upstreamRequest = http.request({
           host: '127.0.0.1',
-          port: 8081,
+          port: requestPath.startsWith('/api/document/') ? 8082 : 8081,
           path: requestPath,
           method: request.method,
-          headers: { ...request.headers, host: '127.0.0.1:8081' },
+          headers: {
+            ...request.headers,
+            host: requestPath.startsWith('/api/document/') ? '127.0.0.1:8082' : '127.0.0.1:8081',
+          },
         }, (upstreamResponse) => {
           response.writeHead(upstreamResponse.statusCode ?? 502, upstreamResponse.headers);
           upstreamResponse.pipe(response);
@@ -30,7 +33,7 @@ function authDevelopmentProxy() {
 }
 
 export default defineConfig({
-  plugins: [react(), authDevelopmentProxy()],
+  plugins: [react(), apiDevelopmentProxy()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
