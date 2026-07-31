@@ -1,0 +1,12 @@
+.dashboard-layout { min-height: 100vh; background: #f3f5f8; }
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 58px;
+  padding: 0 32px;
+  background: #fff;
+  border-bottom: 1px solid #dfe6ea;
+}
+.dashboard-header .ant-typography { margin: 0; }
+.dashboard-main { padding: 40px clamp(24px, 6vw, 80px); }

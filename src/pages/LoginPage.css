@@ -1,0 +1,48 @@
+:root {
+  color: #1c242e;
+  background: #f3f5f8;
+  font-family: Inter, "Microsoft YaHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; }
+
+.login-page {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(360px, 460px);
+  min-height: 100vh;
+  background: #eef2f5;
+}
+
+.login-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px clamp(40px, 10vw, 160px);
+  background: #164a5d;
+  color: #fff;
+}
+
+.eyebrow { margin: 0 0 18px; color: #b5d6d8; font-size: 13px; letter-spacing: 2px; }
+.login-intro h1 { margin: 0; font-size: 48px; font-weight: 650; letter-spacing: 0; }
+.login-intro > p:last-child { max-width: 340px; margin: 18px 0 0; color: #d8e7e8; font-size: 18px; line-height: 1.7; }
+
+.login-card {
+  width: min(420px, calc(100% - 40px));
+  align-self: center;
+  justify-self: center;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgb(26 51 63 / 16%);
+}
+
+.login-card .ant-card-body { padding: 38px; }
+.login-card .ant-typography { margin-bottom: 8px; }
+.login-hint { margin: 24px 0; }
+
+@media (max-width: 760px) {
+  .login-page { grid-template-columns: 1fr; }
+  .login-intro { min-height: 34vh; padding: 40px 28px; }
+  .login-intro h1 { font-size: 36px; }
+  .login-card { margin: -24px 0 32px; }
+}
