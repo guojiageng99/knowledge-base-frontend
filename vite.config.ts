@@ -11,12 +11,12 @@ function apiDevelopmentProxy() {
         const requestPath = request.originalUrl ?? request.url ?? '/';
         const upstreamRequest = http.request({
           host: '127.0.0.1',
-          port: requestPath.startsWith('/api/document/') ? 8082 : 8081,
+          port: requestPath.startsWith('/api/document/') ? 8082 : requestPath.startsWith('/api/file/') ? 8084 : 8081,
           path: requestPath,
           method: request.method,
           headers: {
             ...request.headers,
-            host: requestPath.startsWith('/api/document/') ? '127.0.0.1:8082' : '127.0.0.1:8081',
+            host: requestPath.startsWith('/api/document/') ? '127.0.0.1:8082' : requestPath.startsWith('/api/file/') ? '127.0.0.1:8084' : '127.0.0.1:8081',
           },
         }, (upstreamResponse) => {
           response.writeHead(upstreamResponse.statusCode ?? 502, upstreamResponse.headers);
