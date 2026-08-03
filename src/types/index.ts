@@ -197,3 +197,43 @@ export interface ShareForm {
   password?: string;
   description?: string;
 }
+
+export interface AIMessage {
+  id: string | number;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp?: string;
+  createTime?: string;
+}
+
+export interface AIConversation {
+  id: string | number;
+  title: string;
+  messages?: AIMessage[];
+  messageCount?: number;
+  model?: string;
+  status?: number;
+  tokensUsed?: number;
+  createTime?: string;
+  updateTime?: string;
+}
+
+export interface AIRequest {
+  question: string;
+  conversationId?: string | number;
+  model?: string;
+}
+
+export interface AIModelOption {
+  key: string;
+  displayName: string;
+  description: string;
+  isDefault?: boolean;
+}
+
+export interface AIFeedback {
+  messageId: string | number;
+  conversationId: string | number;
+  type: 'like' | 'dislike';
+  comment?: string;
+}

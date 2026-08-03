@@ -61,3 +61,30 @@
   .management-grid { grid-template-columns: 1fr; }
   .import-main { width: calc(100% - 32px); padding: 20px 0; }
 }
+
+.ai-layout { min-height: 100vh; background: #f7f8fa; }
+.ai-sidebar { border-right: 1px solid #edf0f4; padding: 18px 12px; }
+.ai-sidebar-header, .ai-header, .ai-input-area { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ai-sidebar-header { padding: 0 4px 16px; }
+.ai-sidebar-header .ant-typography, .ai-header .ant-typography { margin: 0; }
+.ai-conversation-item { cursor: pointer; padding: 10px 8px !important; border-radius: 6px; }
+.ai-conversation-item:hover, .ai-conversation-item.active { background: #f1f4f9; }
+.ai-conversation-item .ant-typography { flex: 1; min-width: 0; }
+.ai-content { min-width: 0; display: flex; flex-direction: column; }
+.ai-header { height: 64px; padding: 0 28px; background: #fff; border-bottom: 1px solid #edf0f4; }
+.ai-chat-shell { display: flex; flex: 1; flex-direction: column; min-height: calc(100vh - 64px); }
+.ai-messages { flex: 1; width: min(960px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0 20px; overflow-y: auto; }
+.ai-message-row { display: flex; gap: 12px; margin-bottom: 24px; }
+.ai-message-row.user { flex-direction: row-reverse; }
+.ai-avatar { flex: 0 0 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: #e8edf4; color: #4b5563; }
+.ai-message-row.user .ai-avatar { background: #dbeafe; color: #2563eb; }
+.ai-message-body { max-width: min(760px, 82%); }
+.ai-message-meta { color: #6b7280; font-size: 12px; margin-bottom: 5px; }
+.ai-message-row.user .ai-message-meta { text-align: right; }
+.ai-message-content { padding: 12px 16px; border: 1px solid #e9ebf0; border-radius: 8px; background: #fff; line-height: 1.7; overflow-wrap: anywhere; }
+.ai-message-row.user .ai-message-content { background: #eff3ff; border-color: #d9e2f7; }
+.ai-message-content > :first-child { margin-top: 0; }.ai-message-content > :last-child { margin-bottom: 0; }
+.ai-message-actions { margin-top: 4px; }
+.ai-input-area { width: min(960px, calc(100% - 48px)); margin: 0 auto; padding: 16px 0 28px; align-items: flex-end; }
+.ai-input-area .ant-input-textarea { flex: 1; }.ai-input-area .ant-btn { height: 40px; }
+@media (max-width: 720px) { .ai-layout { display: block; }.ai-sidebar { width: 100% !important; height: auto; }.ai-sidebar .ant-list { max-height: 180px; overflow: auto; }.ai-header { padding: 0 16px; }.ai-messages, .ai-input-area { width: calc(100% - 24px); }.ai-message-body { max-width: 88%; } }

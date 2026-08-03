@@ -32,6 +32,11 @@ class TokenStorage {
     return cookie.get(REFRESH_TOKEN_KEY) ?? this.getTokenInfo()?.refreshToken ?? null;
   }
 
+  getAuthorizationHeader(): string {
+    const token = this.getAccessToken();
+    return token ? `Bearer ${token}` : '';
+  }
+
   isTokenExpired(): boolean {
     const tokenInfo = this.getTokenInfo();
     return !tokenInfo || tokenInfo.expiresAt <= Date.now();
