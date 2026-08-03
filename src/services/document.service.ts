@@ -33,4 +33,14 @@ export const documentService = {
   likeDocument(id: number): Promise<boolean> {
     return unwrap<boolean>(http.post(`/document/documents/${id}/like`));
   },
+
+  saveDocumentContent(id: number, content: string): Promise<boolean> {
+    return unwrap<boolean>(http.post(`/document/documents/${id}/content`, content, {
+      headers: { 'Content-Type': 'text/plain' },
+    }));
+  },
+
+  getDocumentContent(id: number): Promise<string> {
+    return unwrap<string>(http.get(`/document/documents/${id}/content`));
+  },
 };

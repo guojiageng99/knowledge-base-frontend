@@ -82,6 +82,8 @@ export interface KnowledgeDocument {
   title: string;
   summary?: string;
   content?: string;
+  contentLength?: number;
+  wordCount?: number;
   documentType: number;
   categoryId?: number;
   categoryName?: string;
