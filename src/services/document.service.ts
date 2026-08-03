@@ -43,4 +43,8 @@ export const documentService = {
   getDocumentContent(id: number): Promise<string> {
     return unwrap<string>(http.get(`/document/documents/${id}/content`));
   },
+
+  uploadImageFromUrl(url: string): Promise<string> {
+    return unwrap<string>(http.post('/document/documents/upload-image-from-url', null, { params: { imageUrl: url } }));
+  },
 };

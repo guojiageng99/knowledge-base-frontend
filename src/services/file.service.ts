@@ -1,6 +1,14 @@
 import http from './request';
 
-export interface UploadedFile { id: number; originalName: string; fileUrl: string; previewUrl?: string; }
+export interface UploadedFile {
+  id: number;
+  originalName: string;
+  storedName?: string;
+  fileUrl: string;
+  previewUrl?: string;
+  convertedUrl?: string;
+  newUrl?: string;
+}
 
 export const fileService = {
   uploadFromUrl(url: string): Promise<UploadedFile> {

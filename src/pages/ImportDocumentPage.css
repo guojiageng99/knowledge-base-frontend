@@ -1,0 +1,14 @@
+.import-page-card {
+  background: #fff;
+  border: 1px solid #dfe6ea;
+}
+
+.import-tips {
+  margin-top: 16px;
+}
+
+.import-main .ant-upload-drag-container {
+  min-height: 220px;
+  display: grid;
+  place-content: center;
+}

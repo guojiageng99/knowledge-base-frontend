@@ -89,6 +89,7 @@ export interface KnowledgeDocument {
   categoryName?: string;
   tags?: string;
   status: number;
+  isPublic?: number;
   isTop: number;
   isRecommend: number;
   source: number;
@@ -113,6 +114,7 @@ export interface DocumentFilter {
   categoryId?: number;
   keyword?: string;
   status?: number;
+  isPublic?: number;
 }
 
 export interface DocumentForm {

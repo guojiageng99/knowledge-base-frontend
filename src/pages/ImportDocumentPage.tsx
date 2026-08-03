@@ -4,15 +4,15 @@ import type { UploadProps } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { documentService } from '@/services/document.service';
-import { fileService } from '@/services/file.service';
+import './ImportDocumentPage.css';
 
 async function moveRemoteImages(content: string) {
   const pattern = /!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g;
   let result = content;
   for (const match of content.matchAll(pattern)) {
     try {
-      const uploaded = await fileService.uploadFromUrl(match[2].replace(/^`|`$/g, ''));
-      if (uploaded.fileUrl) result = result.replace(match[0], `![${match[1]}](${uploaded.fileUrl})`);
+      const uploadedUrl = await documentService.uploadImageFromUrl(match[2].replace(/^`|`$/g, ''));
+      if (uploadedUrl) result = result.replace(match[0], `![${match[1]}](${uploadedUrl})`);
     } catch { /* Keep the original URL when the file service cannot reach it. */ }
   }
   return result.replace(/<!--[^>]*-->/g, '');

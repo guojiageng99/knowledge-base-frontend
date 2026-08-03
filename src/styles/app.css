@@ -22,6 +22,14 @@
 .table-toolbar .ant-select { width: 128px; }
 .documents-table { background: #fff; border: 1px solid #dfe6ea; }
 .document-content-input textarea { min-height: 360px; font-family: Consolas, 'Courier New', monospace; line-height: 1.65; }
+.document-editor-shell { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 280px; min-height: 680px; background: #fff; border: 1px solid #dfe6ea; }
+.document-editor-main { display: contents; }
+.document-editor-pane, .document-preview-pane, .document-editor-settings { min-width: 0; padding: 20px; }
+.document-editor-pane { display: flex; flex-direction: column; gap: 16px; border-right: 1px solid #dfe6ea; }
+.document-editor-pane .document-content-input { flex: 1; resize: none; }
+.document-preview-pane { overflow: auto; border-right: 1px solid #dfe6ea; background: #fafbfc; }
+.document-editor-settings { display: flex; flex-direction: column; gap: 10px; }
+.document-editor-settings .ant-select, .document-editor-settings .ant-input, .document-editor-settings textarea { width: 100%; }
 .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .form-switches { display: flex; gap: 32px; }
 .document-article { background: #fff; padding: clamp(24px, 5vw, 56px); border: 1px solid #dfe6ea; }
@@ -48,6 +56,8 @@
   .table-toolbar .ant-input-affix-wrapper, .table-toolbar .ant-select { width: 100%; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }
   .form-switches { gap: 18px; flex-wrap: wrap; }
+  .document-editor-shell { grid-template-columns: 1fr; }
+  .document-editor-pane, .document-preview-pane { min-height: 360px; border-right: 0; border-bottom: 1px solid #dfe6ea; }
   .management-grid { grid-template-columns: 1fr; }
   .import-main { width: calc(100% - 32px); padding: 20px 0; }
 }
