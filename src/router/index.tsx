@@ -13,11 +13,13 @@ const ImportDocumentPage = lazy(() => import('@/pages/ImportDocumentPage'));
 const DraftsPage = lazy(() => import('@/pages/DraftsPage'));
 const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'));
 const RecentAccessPage = lazy(() => import('@/pages/RecentAccessPage'));
+const ShareViewerPage = lazy(() => import('@/pages/ShareViewerPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Suspense fallback={loading}><LoginPage /></Suspense> },
+  { path: '/share/:shareId', element: <Suspense fallback={loading}><ShareViewerPage /></Suspense> },
   {
     path: '/',
     element: <ProtectedRoute><Suspense fallback={loading}><DashboardPage /></Suspense></ProtectedRoute>,

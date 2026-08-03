@@ -168,3 +168,32 @@ export interface DocumentAccess {
   accessTime: string;
   status: number;
 }
+
+export interface ShareVO {
+  shareId: string;
+  shareUrl: string;
+  documentId: number;
+  title: string;
+  shareType: number;
+  shareTypeDesc: string;
+  expireType: number;
+  expireTime?: string;
+  expired: boolean;
+  requirePassword: boolean;
+  sharerName?: string;
+  shareTime?: string;
+  accessCount: number;
+  accessLimit: number;
+  description?: string;
+}
+
+export interface ShareForm {
+  documentId: number;
+  shareType?: number;
+  expireType?: number;
+  expireTime?: string;
+  accessLimit?: number;
+  requirePassword?: number;
+  password?: string;
+  description?: string;
+}
