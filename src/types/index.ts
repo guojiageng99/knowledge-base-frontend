@@ -17,6 +17,26 @@ export interface User {
   department?: string;
   position?: string;
   status?: number;
+  lastLoginTime?: string;
+  lastLoginIp?: string;
+  createTime?: string;
+  updateTime?: string;
+}
+
+export interface CategoryTree {
+  id: number;
+  parentId: number;
+  name: string;
+  code?: string;
+  description?: string;
+  icon?: string;
+  sortOrder?: number;
+  status?: number;
+  documentCount?: number;
+  remark?: string;
+  createTime?: string;
+  updateTime?: string;
+  children?: CategoryTree[];
 }
 
 export interface LoginRequest {

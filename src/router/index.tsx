@@ -7,6 +7,8 @@ const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const DocumentsPage = lazy(() => import('@/pages/DocumentsPage'));
 const DocumentEditorPage = lazy(() => import('@/pages/DocumentEditorPage'));
 const DocumentDetailPage = lazy(() => import('@/pages/DocumentDetailPage'));
+const CategoriesPage = lazy(() => import('@/pages/CategoriesPage'));
+const UsersPage = lazy(() => import('@/pages/UsersPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -31,6 +33,14 @@ export const router = createBrowserRouter([
   {
     path: '/documents/:id/edit',
     element: <ProtectedRoute><Suspense fallback={loading}><DocumentEditorPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/categories',
+    element: <ProtectedRoute><Suspense fallback={loading}><CategoriesPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/users',
+    element: <ProtectedRoute><Suspense fallback={loading}><UsersPage /></Suspense></ProtectedRoute>,
   },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

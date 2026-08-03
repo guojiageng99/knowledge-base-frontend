@@ -1,4 +1,4 @@
-import { FileTextOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, FileTextOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
@@ -38,6 +38,10 @@ export default function DashboardPage() {
             Manage documents
           </Button>
         </Card>
+        <Space wrap style={{ marginTop: 16 }}>
+          <Button icon={<AppstoreOutlined />} onClick={() => navigate('/categories')}>Manage categories</Button>
+          <Button icon={<UserOutlined />} onClick={() => navigate('/users')}>Manage users</Button>
+        </Space>
       </main>
     </Layout>
   );

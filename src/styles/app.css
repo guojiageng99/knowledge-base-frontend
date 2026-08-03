@@ -35,6 +35,8 @@
 .markdown-content table { width: 100%; border-collapse: collapse; }
 .markdown-content th, .markdown-content td { padding: 8px; border: 1px solid #dfe6ea; text-align: left; }
 .page-spinner { display: grid; min-height: 100vh; place-items: center; }
+.management-grid { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr); gap: 16px; }
+.full-width { width: 100%; }
 @media (max-width: 720px) {
   .workspace-header { padding: 0 16px; }
   .workspace-main, .editor-main, .detail-main { width: min(100% - 32px, 1200px); padding: 20px 0; }
@@ -42,4 +44,5 @@
   .table-toolbar .ant-input-affix-wrapper, .table-toolbar .ant-select { width: 100%; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }
   .form-switches { gap: 18px; flex-wrap: wrap; }
+  .management-grid { grid-template-columns: 1fr; }
 }
