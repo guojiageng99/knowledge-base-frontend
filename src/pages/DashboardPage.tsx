@@ -1,4 +1,4 @@
-import { AppstoreOutlined, FileTextOutlined, InboxOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, ClockCircleOutlined, FileTextOutlined, InboxOutlined, LogoutOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
@@ -42,6 +42,8 @@ export default function DashboardPage() {
           <Button icon={<AppstoreOutlined />} onClick={() => navigate('/categories')}>Manage categories</Button>
           <Button icon={<UserOutlined />} onClick={() => navigate('/users')}>Manage users</Button>
           <Button icon={<InboxOutlined />} onClick={() => navigate('/drafts')}>Drafts</Button>
+          <Button icon={<StarOutlined />} onClick={() => navigate('/favorites')}>My favorites</Button>
+          <Button icon={<ClockCircleOutlined />} onClick={() => navigate('/recent-access')}>Recent access</Button>
         </Space>
       </main>
     </Layout>

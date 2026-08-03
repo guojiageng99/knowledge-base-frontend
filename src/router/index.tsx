@@ -11,6 +11,8 @@ const CategoriesPage = lazy(() => import('@/pages/CategoriesPage'));
 const UsersPage = lazy(() => import('@/pages/UsersPage'));
 const ImportDocumentPage = lazy(() => import('@/pages/ImportDocumentPage'));
 const DraftsPage = lazy(() => import('@/pages/DraftsPage'));
+const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'));
+const RecentAccessPage = lazy(() => import('@/pages/RecentAccessPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -51,6 +53,14 @@ export const router = createBrowserRouter([
   {
     path: '/drafts',
     element: <ProtectedRoute><Suspense fallback={loading}><DraftsPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/favorites',
+    element: <ProtectedRoute><Suspense fallback={loading}><FavoritesPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/recent-access',
+    element: <ProtectedRoute><Suspense fallback={loading}><RecentAccessPage /></Suspense></ProtectedRoute>,
   },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

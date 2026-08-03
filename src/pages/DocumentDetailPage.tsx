@@ -1,10 +1,11 @@
-import { EditOutlined, LikeOutlined } from '@ant-design/icons';
+import { EditOutlined, LikeOutlined, StarFilled, StarOutlined } from '@ant-design/icons';
 import { Button, Divider, Layout, Space, Spin, Tag, Typography } from 'antd';
 import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate, useParams } from 'react-router-dom';
 import remarkGfm from 'remark-gfm';
 import { useDocumentStore } from '@/stores';
+import { useFavoriteStore } from '@/stores';
 
 function statusLabel(status: number) {
   if (status === 1) return 'Published';
@@ -17,10 +18,16 @@ export default function DocumentDetailPage() {
   const { id } = useParams();
   const documentId = Number(id);
   const { currentDocument, isLoading, fetchDocument, likeDocument } = useDocumentStore();
+  const { toggleFavorite, checkFavorite, isFavorited } = useFavoriteStore();
+  const favorite = currentDocument ? isFavorited(currentDocument.id) : false;
 
   useEffect(() => {
     if (documentId) void fetchDocument(documentId, true);
   }, [documentId, fetchDocument]);
+
+  useEffect(() => {
+    if (documentId) void checkFavorite(documentId);
+  }, [documentId, checkFavorite]);
 
   if (isLoading || !currentDocument) return <div className="page-spinner"><Spin /></div>;
 
@@ -59,6 +66,13 @@ export default function DocumentDetailPage() {
           <Divider />
           <Button icon={<LikeOutlined />} onClick={() => void likeDocument(currentDocument.id)}>
             Like {currentDocument.likeCount}
+          </Button>
+          <Button
+            icon={favorite ? <StarFilled /> : <StarOutlined />}
+            type={favorite ? 'primary' : 'default'}
+            onClick={() => void toggleFavorite(currentDocument.id)}
+          >
+            {favorite ? '收藏中' : '收藏'} {currentDocument.favoriteCount}
           </Button>
         </article>
       </main>

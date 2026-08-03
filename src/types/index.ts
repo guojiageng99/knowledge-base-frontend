@@ -140,3 +140,31 @@ export interface DocumentPage {
   size: number;
   pages: number;
 }
+
+export interface UserFavorite {
+  id: number;
+  userId: number;
+  documentId: number;
+  documentTitle: string;
+  documentSummary?: string;
+  documentCategoryId?: number;
+  documentCategoryName?: string;
+  documentAuthorId?: number;
+  documentAuthorName?: string;
+  documentStatus?: number;
+  documentViewCount?: number;
+  favoriteTime: string;
+  isFavorited?: boolean;
+}
+
+export interface DocumentAccess {
+  id: number;
+  userId: number;
+  documentId: number;
+  documentTitle: string;
+  summary?: string;
+  categoryName?: string;
+  authorName?: string;
+  accessTime: string;
+  status: number;
+}
