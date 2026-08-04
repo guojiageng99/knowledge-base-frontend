@@ -31,6 +31,19 @@ export interface UserStatistics {
   commentCount: number;
 }
 
+export interface StatisticsOverview {
+  totalDocuments: number; totalUsers: number; todayDocuments: number; todayUsers: number;
+  totalViews: number; todayViews: number; totalLikes: number; totalFavorites: number;
+  totalComments: number; pendingReviews: number; aiSearchCount: number; aiQaCount: number; activeUserCount: number;
+}
+export interface TrendDataPoint { date: string; count: number; }
+export interface UserActivityItem { userId: number; username: string; documentCount: number; commentCount: number; viewCount: number; activityScore: number; }
+export interface CategoryDistributionItem { categoryId: number; categoryName: string; documentCount: number; percentage: number; }
+export interface HotDocumentItem { documentId: number; title: string; authorId: number; authorName: string; categoryId: number; categoryName: string; viewCount: number; likeCount: number; favoriteCount: number; commentCount: number; statisticsValue: number; }
+export interface ActiveUserItem { userId: number; username: string; realName: string; avatar: string; documentCount: number; commentCount: number; viewCount: number; statisticsValue: number; }
+export interface DashboardData { overview: StatisticsOverview; documentTrend: TrendDataPoint[]; categoryDistribution: CategoryDistributionItem[]; hotDocuments: HotDocumentItem[]; activeUsers: ActiveUserItem[]; }
+export interface StatisticsQueryParams { startDate?: string; endDate?: string; trendType?: 'create' | 'view'; rankType?: 'view' | 'like' | 'favorite'; userRankType?: 'create' | 'comment' | 'view'; limit?: number; }
+
 export interface CategoryTree {
   id: number;
   parentId: number;

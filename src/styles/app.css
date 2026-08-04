@@ -16,6 +16,7 @@
 .workspace-header .ant-typography { margin: 0; }
 .workspace-main, .editor-main, .detail-main { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0; }
 .profile-main { width: min(1000px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0; }
+.statistics-main { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0; }.statistics-toolbar { margin-bottom: 16px; }.statistics-cards { margin-bottom: 16px; }.statistics-chart { height: 320px; }.statistics-lists { margin-top: 16px; }
 .profile-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px; margin-bottom: 16px; background: #fff; border: 1px solid #dfe6ea; }
 .profile-hero .ant-typography { margin: 0 0 4px; }
 .profile-avatar-hint { margin-top: 8px; color: #1677ff; font-size: 13px; }
@@ -66,6 +67,7 @@
   .workspace-header { padding: 0 16px; }
   .workspace-main, .editor-main, .detail-main { width: min(100% - 32px, 1200px); padding: 20px 0; }
   .profile-main { width: calc(100% - 32px); padding: 20px 0; }
+  .statistics-main { width: calc(100% - 32px); padding: 20px 0; }.statistics-toolbar .ant-space { width: 100%; }.statistics-chart { height: 260px; }
   .profile-hero { align-items: stretch; flex-direction: column; padding: 20px; }
   .page-title-row, .table-toolbar { align-items: stretch; flex-direction: column; }
   .table-toolbar .ant-input-affix-wrapper, .table-toolbar .ant-select { width: 100%; }

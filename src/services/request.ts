@@ -46,3 +46,14 @@ http.interceptors.response.use(
 );
 
 export default http;
+
+export async function download(url: string): Promise<void> {
+  const response = await http.get(url, { responseType: 'blob', download: true });
+  const disposition = response.headers?.['content-disposition'] as string | undefined;
+  const filename = disposition?.match(/filename\*=UTF-8''([^;]+)/i)?.[1] ?? 'export.csv';
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(response.data);
+  link.download = decodeURIComponent(filename);
+  link.click();
+  URL.revokeObjectURL(link.href);
+}

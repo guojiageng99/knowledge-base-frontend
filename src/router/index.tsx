@@ -21,6 +21,7 @@ const FileManagementPage = lazy(() => import('@/pages/FileManagementPage'));
 const TeamsPage = lazy(() => import('@/pages/TeamsPage'));
 const ExportDataPage = lazy(() => import('@/pages/ExportDataPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
+const StatisticsPage = lazy(() => import('@/pages/StatisticsPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
   {
     path: '/profile',
     element: <ProtectedRoute><Suspense fallback={loading}><ProfilePage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/admin/statistics',
+    element: <ProtectedRoute><Suspense fallback={loading}><StatisticsPage /></Suspense></ProtectedRoute>,
   },
   {
     path: '/drafts',
