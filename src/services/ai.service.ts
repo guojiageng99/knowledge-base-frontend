@@ -1,6 +1,6 @@
 import http from './request';
 import type { AxiosResponse } from 'axios';
-import type { AIConversation, AIModelOption, AIRequest, AIFeedback, WritingRequest, WritingResult, WritingTemplate } from '@/types';
+import type { AIConversation, AIModelOption, AIRequest, AIFeedback, DocumentProcessResult, WritingRequest, WritingResult, WritingTemplate } from '@/types';
 import { tokenStorage } from '@/utils/token-storage';
 
 const apiBase = import.meta.env.VITE_API_BASE_URL ?? '/api';
@@ -99,6 +99,50 @@ export const aiService = {
   expandWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/expand', { ...data, actionType: 'expand' })),
   optimizeWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/optimize', { ...data, actionType: 'optimize' })),
   continueWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/continue', { ...data, actionType: 'continue' })),
+  generateDocSummary: (params: { content: string; title?: string; length?: number }): Promise<DocumentProcessResult> => unwrap(http.post<DocumentProcessResult>('/ai/document/summary/content', {
+    content: params.content,
+    title: params.title || '',
+    processType: 'summary',
+    processParams: { summaryLength: params.length || 200 },
+  })),
+  generateDocSummaryStream: async (
+    params: { content: string; title?: string; length?: number },
+    onChunk: (chunk: string) => void,
+    onDone?: (result: DocumentProcessResult) => void,
+    onError?: (error: string) => void,
+    signal?: AbortSignal,
+  ) => {
+    const response = await fetch(`${apiBase}/ai/document/summary/content/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: tokenStorage.getAuthorizationHeader() },
+      body: JSON.stringify({ content: params.content, title: params.title || '', processType: 'summary', processParams: { summaryLength: params.length || 200 } }),
+      signal,
+    });
+    if (!response.ok || !response.body) throw new Error(`AI summary request failed (HTTP ${response.status})`);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let event = '';
+    let messageLines: string[] = [];
+    const flush = () => { if (messageLines.length) { onChunk(messageLines.join('\n')); messageLines = []; } };
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split(/\r?\n/);
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (line.startsWith('event:')) { flush(); event = line.slice(6).trim(); continue; }
+        if (line.startsWith('data:')) {
+          const payload = line.startsWith('data: ') ? line.slice(6) : line.slice(5);
+          if (event === 'error') onError?.(payload);
+          else if (event === 'done') { try { onDone?.(JSON.parse(payload) as DocumentProcessResult); } catch { onError?.('Invalid AI summary completion response'); } }
+          else messageLines.push(payload);
+        } else if (!line.trim()) { flush(); event = ''; }
+      }
+    }
+    flush();
+  },
 };
 
 export default aiService;

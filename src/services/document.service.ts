@@ -45,6 +45,10 @@ export const documentService = {
     }));
   },
 
+  updateSummary(id: number, summary: string): Promise<boolean> {
+    return unwrap<boolean>(http.patch(`/document/documents/${id}/summary`, { summary }));
+  },
+
   getDocumentContent(id: number): Promise<string> {
     return unwrap<string>(http.get(`/document/documents/${id}/content`));
   },

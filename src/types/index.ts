@@ -325,6 +325,15 @@ export interface WritingRequest {
 export interface WritingResult { content: string; tokens?: number; wordCount?: number; model?: string; }
 export interface WritingTemplate { id: string; name: string; description: string; category: string; prompt: string; suggestedContentType?: string; suggestedStyle?: string; }
 
+export interface DocumentProcessResult {
+  processType: string;
+  originalContent?: string;
+  processedContent: string;
+  success: boolean;
+  message: string;
+  tokens?: number;
+}
+
 export interface Citation {
   index: number;
   documentId: number | string;

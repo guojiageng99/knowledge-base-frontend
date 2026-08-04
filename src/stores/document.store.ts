@@ -17,6 +17,7 @@ interface DocumentState {
   deleteDocument: (id: number) => Promise<void>;
   likeDocument: (id: number) => Promise<void>;
   updateFavoriteStatus: (id: number, isFavorited: boolean) => void;
+  setCurrentDocument: (document: KnowledgeDocument) => void;
   setFilter: (filter: DocumentFilter) => void;
 }
 
@@ -123,5 +124,9 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
 
   setFilter(filter) {
     set((state) => ({ filter: { ...state.filter, ...filter } }));
+  },
+
+  setCurrentDocument(document) {
+    set({ currentDocument: document });
   },
 }));

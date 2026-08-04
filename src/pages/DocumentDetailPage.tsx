@@ -1,6 +1,6 @@
-import { CommentOutlined, DownloadOutlined, EditOutlined, LikeFilled, LikeOutlined, ShareAltOutlined, StarFilled, StarOutlined } from '@ant-design/icons';
+import { CommentOutlined, CopyOutlined, DownloadOutlined, EditOutlined, LikeFilled, LikeOutlined, ReloadOutlined, RobotOutlined, ShareAltOutlined, StarFilled, StarOutlined, StopOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Divider, Form, Input, Layout, List, Modal, Select, Space, Spin, Tag, Typography, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate, useParams } from 'react-router-dom';
 import remarkGfm from 'remark-gfm';
@@ -8,6 +8,7 @@ import { useDocumentStore } from '@/stores';
 import { useFavoriteStore } from '@/stores';
 import { documentService } from '@/services/document.service';
 import { commentService } from '@/services/comment.service';
+import aiService from '@/services/ai.service';
 import type { Comment, ShareForm, ShareVO } from '@/types';
 
 function statusLabel(status: number) {
@@ -31,6 +32,53 @@ export default function DocumentDetailPage() {
   const [commentContent, setCommentContent] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   const [shareForm] = Form.useForm<ShareForm>();
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [streamedSummary, setStreamedSummary] = useState('');
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const summaryAbortRef = useRef<AbortController | null>(null);
+  const isSummarizingRef = useRef(false);
+
+  useEffect(() => () => {
+    summaryAbortRef.current?.abort();
+    summaryAbortRef.current = null;
+    isSummarizingRef.current = false;
+  }, [documentId]);
+
+  const handleGenerateSummary = async () => {
+    const document = useDocumentStore.getState().currentDocument;
+    if (!document || !documentId || isSummarizingRef.current) return;
+    if (!document.content?.trim()) { message.warning('文档内容为空，无法生成摘要'); return; }
+    isSummarizingRef.current = true;
+    setIsSummarizing(true);
+    setStreamedSummary('');
+    setSummaryError(null);
+    const controller = new AbortController();
+    summaryAbortRef.current = controller;
+    try {
+      await aiService.generateDocSummaryStream({ content: document.content, title: document.title, length: 200 },
+        (chunk) => setStreamedSummary((current) => current + chunk),
+        async (result) => {
+          const summary = result.processedContent || '';
+          setStreamedSummary(summary);
+          try {
+            await documentService.updateSummary(documentId, summary);
+            useDocumentStore.getState().setCurrentDocument({ ...document, summary });
+            message.success('AI摘要已生成并保存');
+          } catch { message.warning('摘要已生成，但保存失败'); }
+        },
+        (error) => setSummaryError(error),
+        controller.signal);
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) setSummaryError(error instanceof Error ? error.message : '摘要生成失败');
+    } finally {
+      setIsSummarizing(false);
+      isSummarizingRef.current = false;
+      summaryAbortRef.current = null;
+    }
+  };
+
+  const stopSummary = () => { summaryAbortRef.current?.abort(); setIsSummarizing(false); isSummarizingRef.current = false; };
+  const copySummary = async () => { const summary = streamedSummary || currentDocument?.summary; if (!summary) return; await navigator.clipboard.writeText(summary); message.success('摘要已复制'); };
 
   useEffect(() => {
     if (documentId) void fetchDocument(documentId, true);
@@ -149,6 +197,7 @@ export default function DocumentDetailPage() {
             </Button>
             <Button icon={<DownloadOutlined />} onClick={() => void downloadPdf()}>Download PDF</Button>
             <Button icon={<ShareAltOutlined />} onClick={() => void openShare()}>Share</Button>
+            <Button type="primary" icon={isSummarizing ? <StopOutlined /> : currentDocument.summary ? <ReloadOutlined /> : <RobotOutlined />} onClick={isSummarizing ? stopSummary : () => void handleGenerateSummary()}>{isSummarizing ? '停止摘要' : currentDocument.summary ? '重新生成摘要' : 'AI生成摘要'}</Button>
             <Button icon={<EditOutlined />} onClick={() => { const title = encodeURIComponent(currentDocument.title || ''); const content = encodeURIComponent((currentDocument.content || '').slice(0, 500)); navigate(`/ai-writing?title=${title}&content=${content}`); }}>AI写作</Button>
           </div>
           <Typography.Title>{currentDocument.title}</Typography.Title>
@@ -165,6 +214,7 @@ export default function DocumentDetailPage() {
               {currentDocument.summary}
             </Typography.Paragraph>
           )}
+          {(streamedSummary || summaryError) && <section style={{ marginBottom: 16 }}><Space style={{ marginBottom: 8 }}><Typography.Title level={4} style={{ margin: 0 }}>AI摘要</Typography.Title><Button size="small" icon={<CopyOutlined />} onClick={() => void copySummary()}>复制</Button></Space>{summaryError && <Typography.Paragraph type="danger">{summaryError}</Typography.Paragraph>}{streamedSummary && <div className="document-summary markdown-content">{streamedSummary}</div>}</section>}
           <div className="markdown-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {currentDocument.content || 'No document content'}
