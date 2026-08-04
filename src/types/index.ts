@@ -26,6 +26,27 @@ export interface User {
   permissions?: string[];
 }
 
+export interface SystemSettings {
+  basic: Record<string, unknown>;
+  security: Record<string, unknown>;
+  storage: Record<string, unknown>;
+  notification: Record<string, unknown>;
+  ai: Record<string, unknown>;
+  status: SystemStatus;
+}
+
+export interface SystemStatus {
+  version: string;
+  runStatus: 'running' | 'stopped' | 'maintenance';
+  dbStatus: 'connected' | 'disconnected';
+  lastBackupTime: string;
+  totalStorage: number;
+  usedStorage: number;
+  documentCount: number;
+  userCount: number;
+  startTime: string;
+}
+
 export type PermissionType = 'menu' | 'button' | 'api';
 
 export interface PermissionItem {

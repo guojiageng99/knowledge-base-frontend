@@ -62,6 +62,7 @@
 .graph-node-list { margin-top: 18px; }.graph-node { min-height: 74px; display: flex; align-items: center; gap: 12px; padding: 14px; background: #fff; border: 1px solid #dfe6ea; }.graph-node-dot { width: 12px; height: 12px; flex: 0 0 12px; border-radius: 50%; }
 .search-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 24px; margin-top: 24px; }.search-result-card { width: 100%; }.search-result-card .ant-card-head-title { white-space: normal; }.search-history { padding: 16px; align-self: start; background: #fff; border: 1px solid #dfe6ea; }
 .team-members { min-height: 240px; padding: 18px; background: #fff; border: 1px solid #dfe6ea; }.team-members .ant-typography { margin-top: 0; }
+.settings-content { width: min(100%, 820px); min-height: 420px; }
 .media-player { display: block; width: 100%; max-height: 62vh; }
 @media (max-width: 720px) {
   .workspace-header { padding: 0 16px; }

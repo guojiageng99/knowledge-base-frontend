@@ -1,6 +1,7 @@
 import type { User } from '@/types';
 
 export const PERMISSIONS = {
+  systemSettings: 'system:settings',
   systemPermission: 'system:permission',
   systemPermissionCreate: 'system:permission:create',
   systemPermissionEdit: 'system:permission:edit',

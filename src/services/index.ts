@@ -6,3 +6,4 @@ export { default as teamService } from './team.service';
 export { default as reviewService } from './review.service';
 export { default as notificationService } from './notification.service';
 export { default as webSocketService } from './websocket.service';
+export { default as settingsService } from './settings.service';

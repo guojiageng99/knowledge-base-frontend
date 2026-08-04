@@ -1,4 +1,4 @@
-import { ApartmentOutlined, AppstoreOutlined, BarChartOutlined, BellOutlined, ClockCircleOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SafetyCertificateOutlined, SearchOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { ApartmentOutlined, AppstoreOutlined, BarChartOutlined, BellOutlined, ClockCircleOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SafetyCertificateOutlined, SearchOutlined, SettingOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore, useNotificationStore } from '@/stores';
@@ -31,6 +31,7 @@ export default function DashboardPage() {
           <Button icon={<FolderOpenOutlined />} onClick={() => navigate('/files')}>Files</Button>
           <Button icon={<TeamOutlined />} onClick={() => navigate('/admin/teams')}>Teams</Button>
           {hasPermission(user, PERMISSIONS.systemPermission) && <Button icon={<SafetyCertificateOutlined />} onClick={() => navigate('/admin/permissions')}>Permissions</Button>}
+          {hasPermission(user, PERMISSIONS.systemSettings) && <Button icon={<SettingOutlined />} onClick={() => navigate('/admin/settings')}>Settings</Button>}
         </Space>
       </header>
       <main className="dashboard-main">

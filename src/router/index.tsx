@@ -28,6 +28,7 @@ const AIWritingPage = lazy(() => import('@/pages/AIWritingPage'));
 const NotificationCenterPage = lazy(() => import('@/pages/NotificationCenterPage'));
 const DocumentReviewWorkspacePage = lazy(() => import('@/pages/DocumentReviewWorkspacePage'));
 const PermissionsPage = lazy(() => import('@/pages/PermissionsPage'));
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -100,5 +101,6 @@ export const router = createBrowserRouter([
   { path: '/files', element: <ProtectedRoute><Suspense fallback={loading}><FileManagementPage /></Suspense></ProtectedRoute> },
   { path: '/admin/teams', element: <ProtectedRoute><Suspense fallback={loading}><TeamsPage /></Suspense></ProtectedRoute> },
   { path: '/admin/permissions', element: <ProtectedRoute requireAdmin requiredPermissions={[PERMISSIONS.systemPermission]}><Suspense fallback={loading}><PermissionsPage /></Suspense></ProtectedRoute> },
+  { path: '/admin/settings', element: <ProtectedRoute requireAdmin requiredPermissions={[PERMISSIONS.systemSettings]}><Suspense fallback={loading}><SettingsPage /></Suspense></ProtectedRoute> },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

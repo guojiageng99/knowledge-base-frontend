@@ -4,3 +4,4 @@ export { useFavoriteStore } from './favorite.store';
 export { useAIStore } from './ai.store';
 export { useAIWritingStore } from './ai-writing.store';
 export { useNotificationStore } from './notification.store';
+export { useAppStore } from './app.store';

@@ -1,7 +1,7 @@
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { useEffect } from 'react';
-import { useAuthStore, useNotificationStore } from '@/stores';
+import { useAppStore, useAuthStore, useNotificationStore } from '@/stores';
 import { webSocketService } from '@/services';
 import type { WsNotificationPayload } from '@/types';
 
@@ -10,6 +10,8 @@ export default function App() {
   const user = useAuthStore((state) => state.user);
   const reset = useNotificationStore((state) => state.reset);
   const fetchUnreadCount = useNotificationStore((state) => state.fetchUnreadCount);
+  const fetchAppConfig = useAppStore((state) => state.fetchAppConfig);
+  useEffect(() => { void fetchAppConfig(); }, [fetchAppConfig]);
   useEffect(() => {
     if (!token) { webSocketService.disconnect(); reset(); return; }
     void fetchUnreadCount();
