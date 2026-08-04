@@ -149,6 +149,7 @@ export default function DocumentDetailPage() {
             </Button>
             <Button icon={<DownloadOutlined />} onClick={() => void downloadPdf()}>Download PDF</Button>
             <Button icon={<ShareAltOutlined />} onClick={() => void openShare()}>Share</Button>
+            <Button icon={<EditOutlined />} onClick={() => { const title = encodeURIComponent(currentDocument.title || ''); const content = encodeURIComponent((currentDocument.content || '').slice(0, 500)); navigate(`/ai-writing?title=${title}&content=${content}`); }}>AI写作</Button>
           </div>
           <Typography.Title>{currentDocument.title}</Typography.Title>
           <Space wrap>

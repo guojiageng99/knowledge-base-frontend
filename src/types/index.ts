@@ -309,6 +309,22 @@ export interface AIFeedback {
   comment?: string;
 }
 
+export interface WritingRequest {
+  topic: string;
+  requirements?: string;
+  contentType?: 'article' | 'report' | 'documentation' | 'email' | 'announcement';
+  style?: 'formal' | 'casual' | 'technical' | 'creative' | 'academic';
+  tone?: 'neutral' | 'enthusiastic' | 'serious' | 'friendly' | 'authoritative';
+  length?: number;
+  existingContent?: string;
+  actionType?: 'generate' | 'expand' | 'optimize' | 'continue';
+  templateId?: string;
+  model?: string;
+}
+
+export interface WritingResult { content: string; tokens?: number; wordCount?: number; model?: string; }
+export interface WritingTemplate { id: string; name: string; description: string; category: string; prompt: string; suggestedContentType?: string; suggestedStyle?: string; }
+
 export interface Citation {
   index: number;
   documentId: number | string;

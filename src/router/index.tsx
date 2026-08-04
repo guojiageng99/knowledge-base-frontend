@@ -22,6 +22,7 @@ const TeamsPage = lazy(() => import('@/pages/TeamsPage'));
 const ExportDataPage = lazy(() => import('@/pages/ExportDataPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const StatisticsPage = lazy(() => import('@/pages/StatisticsPage'));
+const AIWritingPage = lazy(() => import('@/pages/AIWritingPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
   { path: '/login', element: <Suspense fallback={loading}><LoginPage /></Suspense> },
   { path: '/share/:shareId', element: <Suspense fallback={loading}><ShareViewerPage /></Suspense> },
   { path: '/ai', element: <ProtectedRoute><Suspense fallback={loading}><AIAssistantPage /></Suspense></ProtectedRoute> },
+  { path: '/ai-writing', element: <ProtectedRoute><Suspense fallback={loading}><AIWritingPage /></Suspense></ProtectedRoute> },
   {
     path: '/',
     element: <ProtectedRoute><Suspense fallback={loading}><DashboardPage /></Suspense></ProtectedRoute>,

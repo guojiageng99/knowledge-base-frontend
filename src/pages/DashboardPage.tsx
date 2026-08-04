@@ -1,4 +1,4 @@
-import { ApartmentOutlined, AppstoreOutlined, BarChartOutlined, ClockCircleOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SearchOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { ApartmentOutlined, AppstoreOutlined, BarChartOutlined, ClockCircleOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SearchOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
@@ -22,6 +22,7 @@ export default function DashboardPage() {
           <Button icon={<LogoutOutlined />} onClick={handleLogout}>退出</Button>
           <Button icon={<UserOutlined />} onClick={() => navigate('/profile')}>Profile</Button>
           <Button icon={<BarChartOutlined />} onClick={() => navigate('/admin/statistics')}>Statistics</Button>
+          <Button icon={<EditOutlined />} onClick={() => navigate('/ai-writing')}>AI写作</Button>
           <Button icon={<SearchOutlined />} onClick={() => navigate('/search')}>Search</Button>
           <Button icon={<ApartmentOutlined />} onClick={() => navigate('/knowledge-graph')}>Knowledge graph</Button>
           <Button icon={<FolderOpenOutlined />} onClick={() => navigate('/files')}>Files</Button>

@@ -1,6 +1,6 @@
 import http from './request';
 import type { AxiosResponse } from 'axios';
-import type { AIConversation, AIModelOption, AIRequest, AIFeedback } from '@/types';
+import type { AIConversation, AIModelOption, AIRequest, AIFeedback, WritingRequest, WritingResult, WritingTemplate } from '@/types';
 import { tokenStorage } from '@/utils/token-storage';
 
 const apiBase = import.meta.env.VITE_API_BASE_URL ?? '/api';
@@ -63,6 +63,42 @@ export const aiService = {
       }
     }
   },
+  getWritingTemplates: (): Promise<WritingTemplate[]> => unwrap(http.get<WritingTemplate[]>('/ai/writing/templates')),
+  generateWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/generate', { ...data, actionType: 'generate' })),
+  generateWritingStream: async (data: WritingRequest, onMessage: (chunk: string) => void, onDone?: (result: WritingResult) => void, onError?: (error: string) => void) => {
+    const response = await fetch(`${apiBase}/ai/writing/generate/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: tokenStorage.getAuthorizationHeader() },
+      body: JSON.stringify({ ...data, actionType: 'generate' }),
+    });
+    if (!response.ok || !response.body) throw new Error(`AI writing request failed (HTTP ${response.status})`);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let event = '';
+    let messageLines: string[] = [];
+    const flush = () => { if (messageLines.length) { onMessage(messageLines.join('\n')); messageLines = []; } };
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split(/\r?\n/);
+      buffer = lines.pop() ?? '';
+      for (const line of lines) {
+        if (line.startsWith('event:')) { flush(); event = line.slice(6).trim(); continue; }
+        if (line.startsWith('data:')) {
+          const payload = line.startsWith('data: ') ? line.slice(6) : line.slice(5);
+          if (event === 'error') onError?.(payload);
+          else if (event === 'done') { try { onDone?.(JSON.parse(payload) as WritingResult); } catch { onError?.('Invalid AI writing completion response'); } }
+          else messageLines.push(payload);
+        } else if (!line.trim()) { flush(); event = ''; }
+      }
+    }
+    flush();
+  },
+  expandWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/expand', { ...data, actionType: 'expand' })),
+  optimizeWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/optimize', { ...data, actionType: 'optimize' })),
+  continueWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/continue', { ...data, actionType: 'continue' })),
 };
 
 export default aiService;

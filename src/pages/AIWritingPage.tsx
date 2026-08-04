@@ -1,0 +1,36 @@
+import { ArrowLeftOutlined, ClearOutlined, CopyOutlined, EditOutlined, ExpandOutlined, FileAddOutlined, FormatPainterOutlined, RobotOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { Alert, App, Button, Card, Col, Input, InputNumber, Layout, List, Row, Select, Space, Spin, Tag, Typography } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAIWritingStore } from '@/stores';
+import type { WritingRequest } from '@/types';
+
+const { TextArea } = Input;
+
+export default function AIWritingPage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { message } = App.useApp();
+  const store = useAIWritingStore();
+  const [topic, setTopic] = useState('');
+  const [requirements, setRequirements] = useState('');
+  const [contentType, setContentType] = useState<WritingRequest['contentType']>('article');
+  const [style, setStyle] = useState<WritingRequest['style']>('formal');
+  const [tone, setTone] = useState<WritingRequest['tone']>('neutral');
+  const [length, setLength] = useState<number | null>(800);
+  const [streaming, setStreaming] = useState(true);
+
+  useEffect(() => { const title = searchParams.get('title'); const content = searchParams.get('content'); if (title) setTopic(title); if (content) setRequirements(content); }, [searchParams]);
+  useEffect(() => { void store.fetchTemplates(); }, [store.fetchTemplates]);
+  const request = (actionType: WritingRequest['actionType']): WritingRequest => ({ topic: topic.trim(), requirements: requirements.trim() || undefined, existingContent: requirements.trim() || undefined, contentType, style, tone, length: length || undefined, actionType });
+  const run = async (action: 'generate' | 'expand' | 'optimize' | 'continue') => {
+    if (!topic.trim()) { message.warning('请输入写作主题'); return; }
+    if (action !== 'generate' && !requirements.trim()) { message.warning('请输入已有内容'); return; }
+    try { if (action === 'generate') await (streaming ? store.generateContentStream(request(action)) : store.generateContent(request(action))); else if (action === 'expand') await store.expandContent(request(action)); else if (action === 'optimize') await store.optimizeContent(request(action)); else await store.continueWriting(request(action)); } catch { message.error('AI写作请求失败，请检查模型配置'); }
+  };
+  const insert = () => { if (!store.generatedContent) return; const query = new URLSearchParams({ title: topic || 'AI生成文档', content: store.generatedContent }); window.open(`/documents/create?${query.toString()}`, '_blank'); };
+  const options = useMemo(() => ({ contentType: [{ value: 'article', label: '文章' }, { value: 'report', label: '报告' }, { value: 'documentation', label: '技术文档' }, { value: 'email', label: '邮件' }, { value: 'announcement', label: '公告' }], style: [{ value: 'formal', label: '正式' }, { value: 'casual', label: '轻松' }, { value: 'technical', label: '技术' }, { value: 'creative', label: '创意' }, { value: 'academic', label: '学术' }], tone: [{ value: 'neutral', label: '中性' }, { value: 'enthusiastic', label: '热情' }, { value: 'serious', label: '严肃' }, { value: 'friendly', label: '友好' }, { value: 'authoritative', label: '权威' }] }), []);
+  return <Layout className="workspace-layout"><header className="workspace-header"><Space><Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>返回</Button><Typography.Title level={4} style={{ margin: 0 }}><RobotOutlined /> AI写作</Typography.Title></Space><Space><Tag color="blue">{store.wordCount} 字</Tag><Tag color="purple">{store.tokens} tokens</Tag><Button icon={<CopyOutlined />} disabled={!store.generatedContent} onClick={() => { void navigator.clipboard.writeText(store.generatedContent); message.success('已复制'); }}>复制</Button><Button type="primary" icon={<FileAddOutlined />} disabled={!store.generatedContent} onClick={insert}>插入到文档</Button></Space></header><main style={{ padding: 20 }}><Row gutter={20}><Col xs={24} lg={9}><Card title={<Space><EditOutlined /> 写作设置</Space>}><Typography.Text strong>写作主题</Typography.Text><Input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="输入文章主题或标题" style={{ margin: '8px 0 16px' }} /><Typography.Text strong>写作要求或已有内容</Typography.Text><TextArea value={requirements} onChange={(e) => setRequirements(e.target.value)} rows={8} placeholder="补充写作要求，或粘贴已有内容用于扩写、优化、续写" style={{ margin: '8px 0 16px' }} /><Row gutter={8}><Col span={12}><Typography.Text>内容类型</Typography.Text><Select value={contentType} onChange={setContentType} options={options.contentType} style={{ width: '100%', marginTop: 6 }} /></Col><Col span={12}><Typography.Text>写作风格</Typography.Text><Select value={style} onChange={setStyle} options={options.style} style={{ width: '100%', marginTop: 6 }} /></Col></Row><Row gutter={8} style={{ marginTop: 14 }}><Col span={12}><Typography.Text>语气</Typography.Text><Select value={tone} onChange={setTone} options={options.tone} style={{ width: '100%', marginTop: 6 }} /></Col><Col span={12}><Typography.Text>期望字数</Typography.Text><InputNumber min={100} max={10000} value={length} onChange={setLength} style={{ width: '100%', marginTop: 6 }} /></Col></Row><Space direction="vertical" style={{ width: '100%', marginTop: 18 }}><Button type="primary" block icon={<ThunderboltOutlined />} loading={store.isGenerating} onClick={() => void run('generate')}>生成内容</Button><Space wrap><Button icon={<ExpandOutlined />} loading={store.isGenerating} onClick={() => void run('expand')}>扩写</Button><Button icon={<FormatPainterOutlined />} loading={store.isGenerating} onClick={() => void run('optimize')}>优化</Button><Button icon={<EditOutlined />} loading={store.isGenerating} onClick={() => void run('continue')}>续写</Button><Button icon={<ClearOutlined />} onClick={() => { setTopic(''); setRequirements(''); store.clearResult(); }}>清空</Button></Space><Button type="link" onClick={() => setStreaming((value) => !value)}>{streaming ? '当前：流式生成' : '当前：普通生成'}</Button></Space><Typography.Title level={5} style={{ marginTop: 24 }}>写作模板</Typography.Title><List size="small" dataSource={store.templates} locale={{ emptyText: '暂无模板' }} renderItem={(template) => <List.Item actions={[<Button key="use" type="link" onClick={() => { setRequirements(template.prompt); setContentType(template.suggestedContentType as WritingRequest['contentType']); setStyle(template.suggestedStyle as WritingRequest['style']); }}>使用</Button>]}><List.Item.Meta title={template.name} description={`${template.category} · ${template.description}`} /></List.Item>} /></Card></Col><Col xs={24} lg={15}><Card title="生成结果" style={{ minHeight: 620 }}><Spin spinning={store.isGenerating && !store.generatedContent}><div style={{ minHeight: 520 }}><Alert type="info" showIcon message="内容由 AI 生成，请结合实际情况审核后使用" style={{ marginBottom: 16 }} />{store.error && <Alert type="error" showIcon message={store.error} style={{ marginBottom: 16 }} />}{store.generatedContent ? <div className="markdown-content"><ReactMarkdown remarkPlugins={[remarkGfm]}>{store.generatedContent}</ReactMarkdown></div> : <Typography.Paragraph type="secondary">输入主题后点击生成，结果会显示在这里。</Typography.Paragraph>}</div></Spin></Card></Col></Row></main></Layout>;
+}

@@ -15,6 +15,8 @@ export default function DocumentEditorPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const from = searchParams.get('from') || 'documents';
+  const prefilledTitle = searchParams.get('title') || '';
+  const prefilledContent = searchParams.get('content') || '';
   const documentId = id ? Number(id) : undefined;
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
@@ -23,6 +25,12 @@ export default function DocumentEditorPage() {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (documentId) return;
+    if (prefilledTitle) setTitle(prefilledTitle);
+    if (prefilledContent) setContent(prefilledContent);
+  }, [documentId, prefilledContent, prefilledTitle]);
 
   useEffect(() => {
     if (!documentId) return;
