@@ -85,6 +85,7 @@
 .ai-message-row.user .ai-message-content { background: #eff3ff; border-color: #d9e2f7; }
 .ai-message-content > :first-child { margin-top: 0; }.ai-message-content > :last-child { margin-bottom: 0; }
 .ai-message-actions { margin-top: 4px; }
+.ai-citations { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px solid #edf0f4; margin-top: 10px; padding-top: 8px; }
 .ai-input-area { width: min(960px, calc(100% - 48px)); margin: 0 auto; padding: 16px 0 28px; align-items: flex-end; }
 .ai-input-area .ant-input-textarea { flex: 1; }.ai-input-area .ant-btn { height: 40px; }
 @media (max-width: 720px) { .ai-layout { display: block; }.ai-sidebar { width: 100% !important; height: auto; }.ai-sidebar .ant-list { max-height: 180px; overflow: auto; }.ai-header { padding: 0 16px; }.ai-messages, .ai-input-area { width: calc(100% - 24px); }.ai-message-body { max-width: 88%; } }

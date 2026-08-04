@@ -10,6 +10,7 @@ interface AIState {
   isLoading: boolean;
   isStreaming: boolean;
   currentResponse: string;
+  ragEnabled: boolean;
   fetchConversations: () => Promise<void>;
   fetchModels: () => Promise<void>;
   createConversation: (title: string) => Promise<void>;
@@ -17,11 +18,12 @@ interface AIState {
   deleteConversation: (id: string | number) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
   setSelectedModel: (model: string) => void;
+  toggleRag: (enabled: boolean) => void;
 }
 
 export const useAIStore = create<AIState>((set, get) => ({
   conversations: [], currentConversation: null, availableModels: [], selectedModel: 'qwen',
-  isLoading: false, isStreaming: false, currentResponse: '',
+  isLoading: false, isStreaming: false, currentResponse: '', ragEnabled: false,
   fetchConversations: async () => {
     set({ isLoading: true });
     try { set({ conversations: await aiService.getConversations() }); } finally { set({ isLoading: false }); }
@@ -43,12 +45,13 @@ export const useAIStore = create<AIState>((set, get) => ({
     const userMessage: AIMessage = { id: `local-${Date.now()}`, role: 'user', content, timestamp: new Date().toISOString() };
     const conversation = old ?? { id: '', title: content.slice(0, 30), messages: [] };
     set({ currentConversation: { ...conversation, messages: [...(conversation.messages ?? []), userMessage] } });
-    let conversationId: string | number | undefined = old?.id || undefined; let answer = '';
+    let conversationId: string | number | undefined = old?.id || undefined; let answer = ''; let citations: AIMessage['citations']; let fromKnowledgeBase = false;
     try {
-      await aiService.askStream({ question: content, conversationId, model: get().selectedModel }, (chunk) => { answer += chunk; set({ currentResponse: answer }); }, (result) => { conversationId = result.conversationId; }, (error) => { throw new Error(error); });
-      const assistant: AIMessage = { id: `local-${Date.now()}-answer`, role: 'assistant', content: answer, timestamp: new Date().toISOString() };
+      await aiService.askStream({ question: content, conversationId, model: get().selectedModel, knowledgeBase: get().ragEnabled }, (chunk) => { answer += chunk; set({ currentResponse: answer }); }, (result) => { conversationId = result.conversationId; citations = result.citations; fromKnowledgeBase = result.fromKnowledgeBase ?? false; }, (error) => { throw new Error(error); });
+      const assistant: AIMessage = { id: `local-${Date.now()}-answer`, role: 'assistant', content: answer, timestamp: new Date().toISOString(), citations, fromKnowledgeBase };
       set((s) => { const current = s.currentConversation; if (!current) return {}; const updated = { ...current, id: conversationId ?? current.id, messages: [...(current.messages ?? []), assistant] }; return { currentConversation: updated, conversations: [updated, ...s.conversations.filter((c) => String(c.id) !== String(updated.id))], isLoading: false, isStreaming: false, currentResponse: '' }; });
     } catch (error) { set({ isLoading: false, isStreaming: false, currentResponse: '' }); throw error; }
   },
   setSelectedModel: (selectedModel) => set({ selectedModel }),
+  toggleRag: (ragEnabled) => set({ ragEnabled }),
 }));

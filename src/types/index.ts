@@ -204,6 +204,8 @@ export interface AIMessage {
   content: string;
   timestamp?: string;
   createTime?: string;
+  citations?: Citation[];
+  fromKnowledgeBase?: boolean;
 }
 
 export interface AIConversation {
@@ -222,6 +224,7 @@ export interface AIRequest {
   question: string;
   conversationId?: string | number;
   model?: string;
+  knowledgeBase?: boolean;
 }
 
 export interface AIModelOption {
@@ -236,4 +239,12 @@ export interface AIFeedback {
   conversationId: string | number;
   type: 'like' | 'dislike';
   comment?: string;
+}
+
+export interface Citation {
+  index: number;
+  documentId: number | string;
+  documentTitle: string;
+  excerpt: string;
+  relevanceScore: number;
 }

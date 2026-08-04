@@ -10,6 +10,8 @@ export interface AIStreamResult {
   messageId?: string | number;
   content?: string;
   tokens?: number;
+  citations?: import('@/types').Citation[];
+  fromKnowledgeBase?: boolean;
 }
 
 async function unwrap<T>(request: Promise<AxiosResponse<T> | T>): Promise<T> {
@@ -38,7 +40,7 @@ export const aiService = {
     const response = await fetch(`${apiBase}/ai/chat/stream`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: tokenStorage.getAuthorizationHeader() },
-      body: JSON.stringify({ content: data.question, conversationId: data.conversationId, model: data.model }),
+      body: JSON.stringify({ content: data.question, conversationId: data.conversationId, model: data.model, enableRag: data.knowledgeBase === true }),
     });
     if (!response.ok || !response.body) throw new Error(`AI service request failed (HTTP ${response.status})`);
     const reader = response.body.getReader();
