@@ -15,6 +15,11 @@
 .workspace-header { display: flex; align-items: center; justify-content: space-between; height: 58px; padding: 0 32px; background: #fff; border-bottom: 1px solid #dfe6ea; }
 .workspace-header .ant-typography { margin: 0; }
 .workspace-main, .editor-main, .detail-main { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0; }
+.profile-main { width: min(1000px, calc(100% - 48px)); margin: 0 auto; padding: 32px 0; }
+.profile-hero { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px; margin-bottom: 16px; background: #fff; border: 1px solid #dfe6ea; }
+.profile-hero .ant-typography { margin: 0 0 4px; }
+.profile-avatar-hint { margin-top: 8px; color: #1677ff; font-size: 13px; }
+.profile-stats { margin-bottom: 16px; }.profile-stats .ant-card { height: 100%; }
 .page-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
 .page-title-row .ant-typography { margin-bottom: 4px; }
 .table-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -60,6 +65,8 @@
 @media (max-width: 720px) {
   .workspace-header { padding: 0 16px; }
   .workspace-main, .editor-main, .detail-main { width: min(100% - 32px, 1200px); padding: 20px 0; }
+  .profile-main { width: calc(100% - 32px); padding: 20px 0; }
+  .profile-hero { align-items: stretch; flex-direction: column; padding: 20px; }
   .page-title-row, .table-toolbar { align-items: stretch; flex-direction: column; }
   .table-toolbar .ant-input-affix-wrapper, .table-toolbar .ant-select { width: 100%; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }

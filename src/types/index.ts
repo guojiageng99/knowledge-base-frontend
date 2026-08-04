@@ -16,11 +16,19 @@ export interface User {
   realName?: string;
   department?: string;
   position?: string;
+  remark?: string;
   status?: number;
   lastLoginTime?: string;
   lastLoginIp?: string;
   createTime?: string;
   updateTime?: string;
+}
+
+export interface UserStatistics {
+  documentCount: number;
+  likeCount: number;
+  viewCount: number;
+  commentCount: number;
 }
 
 export interface CategoryTree {

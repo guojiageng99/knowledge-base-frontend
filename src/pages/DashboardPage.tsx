@@ -20,6 +20,7 @@ export default function DashboardPage() {
         <Space>
           <span><UserOutlined /> {user?.nickname || user?.realName || user?.username}</span>
           <Button icon={<LogoutOutlined />} onClick={handleLogout}>退出</Button>
+          <Button icon={<UserOutlined />} onClick={() => navigate('/profile')}>Profile</Button>
           <Button icon={<SearchOutlined />} onClick={() => navigate('/search')}>Search</Button>
           <Button icon={<ApartmentOutlined />} onClick={() => navigate('/knowledge-graph')}>Knowledge graph</Button>
           <Button icon={<FolderOpenOutlined />} onClick={() => navigate('/files')}>Files</Button>

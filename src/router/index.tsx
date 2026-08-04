@@ -20,6 +20,7 @@ const SearchPage = lazy(() => import('@/pages/SearchPage'));
 const FileManagementPage = lazy(() => import('@/pages/FileManagementPage'));
 const TeamsPage = lazy(() => import('@/pages/TeamsPage'));
 const ExportDataPage = lazy(() => import('@/pages/ExportDataPage'));
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
   {
     path: '/users',
     element: <ProtectedRoute><Suspense fallback={loading}><UsersPage /></Suspense></ProtectedRoute>,
+  },
+  {
+    path: '/profile',
+    element: <ProtectedRoute><Suspense fallback={loading}><ProfilePage /></Suspense></ProtectedRoute>,
   },
   {
     path: '/drafts',
