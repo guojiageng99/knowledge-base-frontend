@@ -163,6 +163,23 @@ export interface DocumentPage {
   pages: number;
 }
 
+export interface ReviewTask {
+  id: string;
+  documentId: string;
+  documentTitle: string;
+  documentAuthor: User;
+  reviewerId: string;
+  reviewer?: User;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewRound: number;
+  reviewLevel?: number;
+  comment?: string;
+  createdAt: string;
+  reviewedAt?: string;
+  categoryId?: string;
+  categoryName?: string;
+}
+
 export interface BatchExportRequest {
   documentIds: string[];
   format: 'pdf' | 'markdown';
