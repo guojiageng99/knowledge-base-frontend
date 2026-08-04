@@ -142,6 +142,11 @@ export interface DocumentPage {
   pages: number;
 }
 
+export interface BatchExportRequest {
+  documentIds: string[];
+  format: 'pdf' | 'markdown';
+}
+
 export interface Comment {
   id: number;
   documentId: number;

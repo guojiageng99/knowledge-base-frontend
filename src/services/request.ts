@@ -6,6 +6,7 @@ import { tokenStorage } from '@/utils/token-storage';
 declare module 'axios' {
   export interface AxiosRequestConfig {
     skipAuth?: boolean;
+    download?: boolean;
   }
 }
 
@@ -25,6 +26,7 @@ http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 http.interceptors.response.use(
   (response) => {
+    if (response.config.download) return response;
     const body = response.data as ApiResponse<unknown>;
     if (typeof body?.code === 'number' && body.code !== 200) {
       return Promise.reject(new Error(body.message || '请求失败'));

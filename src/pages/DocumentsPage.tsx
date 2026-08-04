@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, EditOutlined, EyeOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Layout, message, Popconfirm, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -66,6 +66,7 @@ export default function DocumentsPage() {
     <main className="workspace-main">
       <div className="page-title-row"><div><Typography.Title level={3}>文档</Typography.Title><Typography.Text type="secondary">查询、创建和管理知识文档</Typography.Text></div><Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/documents/create')}>新建文档</Button></div>
       <section className="table-toolbar">
+        <Button icon={<DownloadOutlined />} onClick={() => navigate('/documents/export')}>Export data</Button>
         <Input value={keyword} onChange={(event) => setKeyword(event.target.value)} onPressEnter={() => reload({ keyword, current: 1 })} placeholder="搜索标题、摘要或标签" prefix={<SearchOutlined />} allowClear />
         <Select value={filter.status} onChange={(status) => reload({ status, current: 1 })} options={statusOptions} placeholder="全部状态" allowClear />
         <Button type="primary" icon={<SearchOutlined />} onClick={() => reload({ keyword, current: 1 })}>搜索</Button>

@@ -1,4 +1,5 @@
-import type { DocumentFilter, DocumentForm, DocumentPage, KnowledgeDocument, ShareForm, ShareVO } from '@/types';
+import type { AxiosResponse } from 'axios';
+import type { BatchExportRequest, DocumentFilter, DocumentForm, DocumentPage, KnowledgeDocument, ShareForm, ShareVO } from '@/types';
 import http from './request';
 
 function unwrap<T>(request: Promise<unknown>): Promise<T> {
@@ -58,6 +59,10 @@ export const documentService = {
 
   exportDocumentToPdf(id: number): Promise<string> {
     return unwrap<string>(http.get(`/document/documents/${id}/export-pdf`));
+  },
+
+  batchExportDocuments(data: BatchExportRequest): Promise<AxiosResponse<Blob>> {
+    return http.post('/document/documents/batch-export', data, { responseType: 'blob', download: true }) as Promise<AxiosResponse<Blob>>;
   },
 
   createShare(data: ShareForm): Promise<ShareVO> {
