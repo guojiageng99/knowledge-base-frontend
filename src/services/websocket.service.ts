@@ -28,7 +28,7 @@ class WebSocketService {
     this.active = true;
     const socketUrl = `${import.meta.env.VITE_WS_BASE_URL ?? ''}/ws/notification`;
     this.client = new Client({
-      webSocketFactory: () => new SockJS(socketUrl),
+      webSocketFactory: () => new SockJS(`${socketUrl}?token=${encodeURIComponent(token)}`),
       connectHeaders: { Authorization: `Bearer ${token}` },
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,

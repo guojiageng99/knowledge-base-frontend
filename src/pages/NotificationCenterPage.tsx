@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotificationStore } from '@/stores';
 import type { SystemNotification } from '@/types';
+import { resolveNotificationTarget } from '@/utils/notification-link';
 
 const typeLabels: Record<SystemNotification['type'], string> = { system: 'System', comment: 'Comment', mention: 'Mention', review: 'Review', like: 'Like' };
 const typeColors: Record<SystemNotification['type'], string> = { system: 'blue', comment: 'cyan', mention: 'purple', review: 'orange', like: 'red' };
@@ -22,7 +23,7 @@ export default function NotificationCenterPage() {
   const filtered = useMemo(() => notifications.filter((item) => !type || item.type === type), [notifications, type]);
   const handleRead = async (item: SystemNotification) => { if (!item.read) await markAsRead(item.id); };
   const handleDelete = async (item: SystemNotification) => { await deleteNotification(item.id); if (selected?.id === item.id) setSelected(null); message.success('Notification deleted'); };
-  const openLink = (item: SystemNotification) => { void handleRead(item); if (item.link) navigate(item.link); };
+  const openLink = (item: SystemNotification) => { void handleRead(item); const target = resolveNotificationTarget(item); if (target.url) target.openInNewTab ? window.open(target.url, '_blank', 'noopener,noreferrer') : navigate(target.url); };
 
   return (
     <main className="notification-main">

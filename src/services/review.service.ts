@@ -39,6 +39,10 @@ export const reviewService = {
   batchReview: (taskIds: string[], data: { status: 'approved' | 'rejected'; comment?: string }) =>
     http.post('/document/review/tasks/batch-review', { taskIds, ...data }),
   submitForReview: (documentId: number | string) => http.post(`/document/review/submit/${documentId}`),
+  async getCurrentReviewTask(documentId: number | string) {
+    const record = await http.get<BackendReviewRecord | null>(`/document/review/documents/${documentId}/current`);
+    return record ? mapTask(record as unknown as BackendReviewRecord) : null;
+  },
   async getReviewHistory(documentId: number | string) {
     const records = await http.get<BackendReviewRecord[]>(`/document/review/documents/${documentId}/history`);
     return (records as unknown as BackendReviewRecord[]).map(mapTask);
