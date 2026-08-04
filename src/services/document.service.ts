@@ -57,6 +57,12 @@ export const documentService = {
     return unwrap<string>(http.post('/document/documents/upload-image-from-url', null, { params: { imageUrl: url } }));
   },
 
+  uploadAndParseDocument(file: File): Promise<{ documentId: number; title: string; fileUrl: string; fileSize: number; contentLength: number; contentPreview: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return unwrap(http.post('/document/documents/upload/parse', formData));
+  },
+
   downloadDocumentPdf(id: number): Promise<Blob> {
     return unwrap<Blob>(http.get(`/document/documents/${id}/download-pdf`, { responseType: 'blob' }));
   },
