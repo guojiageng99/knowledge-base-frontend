@@ -34,6 +34,10 @@ export const documentService = {
     return unwrap<boolean>(http.post(`/document/documents/${id}/like`));
   },
 
+  unlikeDocument(id: number): Promise<boolean> {
+    return unwrap<boolean>(http.delete(`/document/documents/${id}/like`));
+  },
+
   saveDocumentContent(id: number, content: string): Promise<boolean> {
     return unwrap<boolean>(http.post(`/document/documents/${id}/content`, content, {
       headers: { 'Content-Type': 'text/plain' },

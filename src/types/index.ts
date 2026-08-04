@@ -98,6 +98,7 @@ export interface KnowledgeDocument {
   sort: number;
   viewCount: number;
   likeCount: number;
+  isLiked?: boolean;
   favoriteCount: number;
   commentCount: number;
   authorId?: number;
@@ -139,6 +140,47 @@ export interface DocumentPage {
   current: number;
   size: number;
   pages: number;
+}
+
+export interface Comment {
+  id: number;
+  documentId: number;
+  parentId: number;
+  rootId: number;
+  content: string;
+  commenterId: number;
+  commenterName?: string;
+  commenterAvatar?: string;
+  replyToUserId?: number;
+  replyToUserName?: string;
+  status: number;
+  likeCount: number;
+  replyCount: number;
+  isLiked: boolean;
+  createdAt: string;
+  replies?: Comment[];
+}
+
+export interface CommentCreateForm {
+  documentId: number;
+  content: string;
+  parentId?: number;
+  replyToUserId?: number;
+}
+
+export interface CommentQuery {
+  current?: number;
+  size?: number;
+  sortBy?: 'created_at' | 'like_count';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface CommentPage {
+  records: Comment[];
+  total: number;
+  current: number;
+  size: number;
+  pages?: number;
 }
 
 export interface UserFavorite {

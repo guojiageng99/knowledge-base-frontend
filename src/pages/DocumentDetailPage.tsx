@@ -1,5 +1,5 @@
-import { DownloadOutlined, EditOutlined, LikeOutlined, ShareAltOutlined, StarFilled, StarOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Divider, Form, Input, Layout, Modal, Select, Space, Spin, Tag, Typography, message } from 'antd';
+import { CommentOutlined, DownloadOutlined, EditOutlined, LikeFilled, LikeOutlined, ShareAltOutlined, StarFilled, StarOutlined } from '@ant-design/icons';
+import { Button, DatePicker, Divider, Form, Input, Layout, List, Modal, Select, Space, Spin, Tag, Typography, message } from 'antd';
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,7 +7,8 @@ import remarkGfm from 'remark-gfm';
 import { useDocumentStore } from '@/stores';
 import { useFavoriteStore } from '@/stores';
 import { documentService } from '@/services/document.service';
-import type { ShareForm, ShareVO } from '@/types';
+import { commentService } from '@/services/comment.service';
+import type { Comment, ShareForm, ShareVO } from '@/types';
 
 function statusLabel(status: number) {
   if (status === 1) return 'Published';
@@ -19,12 +20,16 @@ export default function DocumentDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const documentId = Number(id);
-  const { currentDocument, isLoading, fetchDocument, likeDocument } = useDocumentStore();
+  const { currentDocument, isLoading, fetchDocument, likeDocument, updateFavoriteStatus } = useDocumentStore();
   const { toggleFavorite, checkFavorite, isFavorited } = useFavoriteStore();
   const favorite = currentDocument ? isFavorited(currentDocument.id) : false;
   const [shareVisible, setShareVisible] = useState(false);
   const [shares, setShares] = useState<ShareVO[]>([]);
   const [creatingShare, setCreatingShare] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentContent, setCommentContent] = useState('');
+  const [submittingComment, setSubmittingComment] = useState(false);
   const [shareForm] = Form.useForm<ShareForm>();
 
   useEffect(() => {
@@ -34,6 +39,21 @@ export default function DocumentDetailPage() {
   useEffect(() => {
     if (documentId) void checkFavorite(documentId);
   }, [documentId, checkFavorite]);
+
+  const loadComments = async () => {
+    if (!documentId) return;
+    setCommentsLoading(true);
+    try {
+      const page = await commentService.getDocumentComments(documentId, { current: 1, size: 50 });
+      setComments(page.records);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadComments();
+  }, [documentId]);
 
   const openShare = async () => {
     if (!currentDocument) return;
@@ -67,6 +87,50 @@ export default function DocumentDetailPage() {
     anchor.download = `${currentDocument.title}.pdf`;
     anchor.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleLike = async () => {
+    if (!currentDocument) return;
+    const wasLiked = currentDocument.isLiked ?? false;
+    await likeDocument(currentDocument.id);
+    message.success(wasLiked ? 'Like removed' : 'Document liked');
+  };
+
+  const handleFavorite = async () => {
+    if (!currentDocument) return;
+    const next = await toggleFavorite(currentDocument.id);
+    updateFavoriteStatus(currentDocument.id, next);
+    message.success(next ? 'Added to favorites' : 'Removed from favorites');
+  };
+
+  const submitComment = async () => {
+    if (!currentDocument || !commentContent.trim()) return;
+    setSubmittingComment(true);
+    try {
+      await commentService.createComment({ documentId: currentDocument.id, content: commentContent.trim() });
+      setCommentContent('');
+      await loadComments();
+      await fetchDocument(currentDocument.id);
+      message.success('Comment posted');
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  const toggleCommentLike = async (comment: Comment) => {
+    const wasLiked = comment.isLiked;
+    const delta = wasLiked ? -1 : 1;
+    const updateComment = (isLiked: boolean, countDelta: number) => setComments((items) => items.map((item) => item.id === comment.id
+      ? { ...item, isLiked, likeCount: Math.max(0, item.likeCount + countDelta) }
+      : item));
+    updateComment(!wasLiked, delta);
+    try {
+      if (wasLiked) await commentService.unlikeComment(comment.id);
+      else await commentService.likeComment(comment.id);
+    } catch (error) {
+      updateComment(wasLiked, -delta);
+      throw error;
+    }
   };
 
   if (isLoading || !currentDocument) return <div className="page-spinner"><Spin /></div>;
@@ -106,16 +170,33 @@ export default function DocumentDetailPage() {
             </ReactMarkdown>
           </div>
           <Divider />
-          <Button icon={<LikeOutlined />} onClick={() => void likeDocument(currentDocument.id)}>
-            Like {currentDocument.likeCount}
+          <Button icon={currentDocument.isLiked ? <LikeFilled /> : <LikeOutlined />} type={currentDocument.isLiked ? 'primary' : 'default'} onClick={() => void handleLike()}>
+            {currentDocument.isLiked ? 'Liked' : 'Like'} {currentDocument.likeCount}
           </Button>
           <Button
             icon={favorite ? <StarFilled /> : <StarOutlined />}
             type={favorite ? 'primary' : 'default'}
-            onClick={() => void toggleFavorite(currentDocument.id)}
+            onClick={() => void handleFavorite()}
           >
             {favorite ? '收藏中' : '收藏'} {currentDocument.favoriteCount}
           </Button>
+          <Divider />
+          {currentDocument.allowComment === 1 && <section>
+            <Typography.Title level={4}><CommentOutlined /> Comments ({currentDocument.commentCount})</Typography.Title>
+            <Input.TextArea value={commentContent} onChange={(event) => setCommentContent(event.target.value)} maxLength={1000} showCount rows={3} placeholder="Share your thoughts" />
+            <Button type="primary" style={{ marginTop: 12 }} loading={submittingComment} onClick={() => void submitComment()}>Post comment</Button>
+            <List
+              loading={commentsLoading}
+              dataSource={comments}
+              locale={{ emptyText: 'No comments yet' }}
+              renderItem={(comment) => <List.Item key={comment.id}>
+                <List.Item.Meta
+                  title={comment.commenterName || 'User'}
+                  description={<><Typography.Paragraph style={{ marginBottom: 8 }}>{comment.content}</Typography.Paragraph><Space><Typography.Text type="secondary">{comment.createdAt}</Typography.Text><Button size="small" type="text" icon={comment.isLiked ? <LikeFilled /> : <LikeOutlined />} onClick={() => void toggleCommentLike(comment)}>{comment.likeCount}</Button></Space></>}
+                />
+              </List.Item>}
+            />
+          </section>}
         </article>
       </main>
       <Modal title="Share document" open={shareVisible} onCancel={() => setShareVisible(false)} footer={null} width={640} destroyOnClose>

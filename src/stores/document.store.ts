@@ -16,6 +16,7 @@ interface DocumentState {
   updateDocument: (id: number, data: DocumentForm) => Promise<void>;
   deleteDocument: (id: number) => Promise<void>;
   likeDocument: (id: number) => Promise<void>;
+  updateFavoriteStatus: (id: number, isFavorited: boolean) => void;
   setFilter: (filter: DocumentFilter) => void;
 }
 
@@ -84,13 +85,38 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   },
 
   async likeDocument(id) {
-    await documentService.likeDocument(id);
-    set((state) => ({
+    const currentDocument = get().currentDocument;
+    const current = currentDocument?.id === id
+      ? currentDocument
+      : get().documents.find((document) => document.id === id);
+    const wasLiked = current?.isLiked ?? false;
+    const delta = wasLiked ? -1 : 1;
+    const apply = (isLiked: boolean, countDelta: number) => set((state) => ({
       documents: state.documents.map((document) => document.id === id
-        ? { ...document, likeCount: document.likeCount + 1 }
+        ? { ...document, isLiked, likeCount: Math.max(0, document.likeCount + countDelta) }
         : document),
       currentDocument: state.currentDocument?.id === id
-        ? { ...state.currentDocument, likeCount: state.currentDocument.likeCount + 1 }
+        ? { ...state.currentDocument, isLiked, likeCount: Math.max(0, state.currentDocument.likeCount + countDelta) }
+        : state.currentDocument,
+    }));
+    apply(!wasLiked, delta);
+    try {
+      if (wasLiked) await documentService.unlikeDocument(id);
+      else await documentService.likeDocument(id);
+    } catch (error) {
+      apply(wasLiked, -delta);
+      throw error;
+    }
+  },
+
+  updateFavoriteStatus(id, isFavorited) {
+    const delta = isFavorited ? 1 : -1;
+    set((state) => ({
+      documents: state.documents.map((document) => document.id === id
+        ? { ...document, favoriteCount: Math.max(0, document.favoriteCount + delta) }
+        : document),
+      currentDocument: state.currentDocument?.id === id
+        ? { ...state.currentDocument, favoriteCount: Math.max(0, state.currentDocument.favoriteCount + delta) }
         : state.currentDocument,
     }));
   },
