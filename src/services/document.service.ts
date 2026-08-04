@@ -64,12 +64,36 @@ export const documentService = {
     return unwrap<ShareVO[]>(http.get(`/document/documents/${id}/shares`));
   },
 
+  getShareInfo(shareId: string): Promise<ShareVO> {
+    return unwrap<ShareVO>(http.get(`/document/documents/share/${shareId}`));
+  },
+
+  accessShare(shareId: string, password?: string): Promise<number> {
+    return unwrap<number>(http.post(`/document/documents/share/${shareId}/access`, null, {
+      params: password ? { password } : {},
+    }));
+  },
+
+  getMyShares(): Promise<ShareVO[]> {
+    return unwrap<ShareVO[]>(http.get('/document/documents/share/my'));
+  },
+
+  updateShare(shareId: string, data: Partial<ShareForm>): Promise<boolean> {
+    return unwrap<boolean>(http.put(`/document/documents/share/${shareId}`, data));
+  },
+
   deleteShare(shareId: string): Promise<boolean> {
     return unwrap<boolean>(http.delete(`/document/documents/share/${shareId}`));
   },
 
   getPublicShareInfo(shareId: string): Promise<ShareVO> {
     return unwrap<ShareVO>(http.get(`/document/share/${shareId}`, { skipAuth: true }));
+  },
+
+  verifyPublicShare(shareId: string, password?: string): Promise<boolean> {
+    return unwrap<boolean>(http.post(`/document/share/${shareId}/verify`, null, {
+      params: password ? { password } : {}, skipAuth: true,
+    }));
   },
 
   accessPublicShare(shareId: string, password?: string): Promise<KnowledgeDocument> {
