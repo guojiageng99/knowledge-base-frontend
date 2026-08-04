@@ -1,4 +1,4 @@
-import { ArrowLeftOutlined, SaveOutlined, SendOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, HistoryOutlined, SaveOutlined, SendOutlined } from '@ant-design/icons';
 import { Button, Input, Layout, message, Select, Space, Spin, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -8,6 +8,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { documentService } from '@/services/document.service';
 import { reviewService } from '@/services/review.service';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import DraftRecoveryDialog from '@/components/DraftRecoveryDialog';
+import SaveStatusIndicator from '@/components/SaveStatusIndicator';
 
 const { TextArea } = Input;
 
@@ -27,6 +30,7 @@ export default function DocumentEditorPage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveOption, setSaveOption] = useState<'submit_review' | 'draft'>('submit_review');
+  const autoSave = useAutoSave({ documentId, formData: { title, content, summary, categoryId, isPublic, saveOption }, onDocumentCreated: (newId) => navigate(`/documents/${newId}/edit`, { replace: true }) });
 
   useEffect(() => {
     if (documentId) return;
@@ -66,6 +70,7 @@ export default function DocumentEditorPage() {
         if (saveOption === 'submit_review') await reviewService.submitForReview(newId);
       }
       if (documentId && saveOption === 'submit_review') await reviewService.submitForReview(documentId);
+      autoSave.clearDraft();
       message.success(saveOption === 'submit_review' ? '文档已提交审核' : '草稿已保存');
       navigate(from === 'drafts' ? '/drafts' : '/documents');
     } finally {
@@ -86,6 +91,8 @@ export default function DocumentEditorPage() {
             <Typography.Text type="secondary">正文存储在 MongoDB，文档元数据存储在 MySQL。</Typography.Text>
           </div>
           <Space>
+            <SaveStatusIndicator status={autoSave.saveStatus} />
+            {(documentId || autoSave.currentDocumentId) && <Button icon={<HistoryOutlined />} onClick={() => navigate(`/documents/${documentId ?? autoSave.currentDocumentId}/autosave-history`)}>History</Button>}
             <Select value={saveOption} onChange={setSaveOption} options={[{ value: 'submit_review', label: '提交审核' }, { value: 'draft', label: '保存草稿' }]} />
             <Button type="primary" onClick={() => void save(saveOption === 'draft' ? 0 : 1)} icon={saveOption === 'draft' ? <SaveOutlined /> : <SendOutlined />} loading={saving}>{saveOption === 'draft' ? '保存草稿' : '提交审核'}</Button>
           </Space>
@@ -128,6 +135,11 @@ export default function DocumentEditorPage() {
           </section>
         </Spin>
       </main>
+      <DraftRecoveryDialog open={autoSave.recoveryOpen} draft={autoSave.recoveryDraft} onAccept={() => {
+        const draft = autoSave.acceptRecovery();
+        if (!draft) return;
+        setTitle(draft.title); setContent(draft.content); setSummary(draft.summary); setCategoryId(draft.categoryId); setIsPublic(draft.isPublic); setSaveOption(draft.saveOption);
+      }} onDismiss={autoSave.dismissRecovery} />
     </Layout>
   );
 }

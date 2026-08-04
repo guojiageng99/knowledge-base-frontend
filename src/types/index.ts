@@ -244,6 +244,33 @@ export interface DocumentForm {
   sort?: number;
 }
 
+export interface AutoSaveDocumentForm {
+  id?: number;
+  title?: string;
+  content?: string;
+  summary?: string;
+  categoryId?: number;
+  teamId?: number;
+  tags?: string;
+}
+
+export interface AutoSaveHistoryItem {
+  id: string;
+  documentId: number;
+  title: string;
+  contentPreview?: string;
+  content?: string;
+  contentLength?: number;
+  savedAt: string;
+}
+
+export interface AutoSaveHistoryPage {
+  records: AutoSaveHistoryItem[];
+  total: number;
+  current: number;
+  size: number;
+}
+
 export interface DocumentPage {
   records: KnowledgeDocument[];
   total: number;

@@ -1,5 +1,5 @@
 import type { AxiosResponse } from 'axios';
-import type { BatchExportRequest, DocumentFilter, DocumentForm, DocumentPage, KnowledgeDocument, ShareForm, ShareVO } from '@/types';
+import type { AutoSaveDocumentForm, AutoSaveHistoryItem, AutoSaveHistoryPage, BatchExportRequest, DocumentFilter, DocumentForm, DocumentPage, KnowledgeDocument, ShareForm, ShareVO } from '@/types';
 import http from './request';
 
 function unwrap<T>(request: Promise<unknown>): Promise<T> {
@@ -25,6 +25,22 @@ export const documentService = {
 
   updateDocument(id: number, data: DocumentForm): Promise<boolean> {
     return unwrap<boolean>(http.put('/document/documents', { ...data, id }));
+  },
+
+  autoSaveDocument(data: AutoSaveDocumentForm): Promise<number> {
+    return unwrap<number>(http.post('/document/documents/autosave', data));
+  },
+
+  dismissAutoSaveDrafts(): Promise<boolean> {
+    return unwrap<boolean>(http.put('/document/documents/autosave/dismiss'));
+  },
+
+  getAutoSaveHistory(documentId: number, current = 1, size = 20): Promise<AutoSaveHistoryPage> {
+    return unwrap<AutoSaveHistoryPage>(http.get(`/document/documents/${documentId}/autosave-history`, { params: { current, size } }));
+  },
+
+  getAutoSaveSnapshot(documentId: number, snapshotId: string): Promise<AutoSaveHistoryItem> {
+    return unwrap<AutoSaveHistoryItem>(http.get(`/document/documents/${documentId}/autosave-history/${snapshotId}`));
   },
 
   deleteDocument(id: number): Promise<boolean> {

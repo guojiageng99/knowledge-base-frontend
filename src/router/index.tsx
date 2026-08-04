@@ -9,6 +9,7 @@ const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const DocumentsPage = lazy(() => import('@/pages/DocumentsPage'));
 const DocumentEditorPage = lazy(() => import('@/pages/DocumentEditorPage'));
+const AutoSaveHistoryPage = lazy(() => import('@/pages/AutoSaveHistoryPage'));
 const DocumentDetailPage = lazy(() => import('@/pages/DocumentDetailPage'));
 const CategoriesPage = lazy(() => import('@/pages/CategoriesPage'));
 const UsersPage = lazy(() => import('@/pages/UsersPage'));
@@ -69,6 +70,7 @@ export const router = createBrowserRouter([
     path: '/documents/:id/edit',
     element: <ProtectedRoute><Suspense fallback={loading}><DocumentEditorPage /></Suspense></ProtectedRoute>,
   },
+  { path: '/documents/:id/autosave-history', element: <ProtectedRoute><Suspense fallback={loading}><AutoSaveHistoryPage /></Suspense></ProtectedRoute> },
   {
     path: '/categories',
     element: <ProtectedRoute><Suspense fallback={loading}><CategoriesPage /></Suspense></ProtectedRoute>,

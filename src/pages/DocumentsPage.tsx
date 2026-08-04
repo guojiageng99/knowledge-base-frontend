@@ -1,4 +1,4 @@
-import { DeleteOutlined, DownloadOutlined, EditOutlined, EyeOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, EditOutlined, EyeOutlined, HistoryOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Layout, message, Popconfirm, Select, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -50,6 +50,7 @@ export default function DocumentsPage() {
       render: (_, document) => <Space size={0}>
         <Tooltip title="查看"><Button type="text" icon={<EyeOutlined />} onClick={() => navigate(`/documents/${document.id}`)} /></Tooltip>
         <Tooltip title="编辑"><Button type="text" icon={<EditOutlined />} onClick={() => navigate(`/documents/${document.id}/edit`)} /></Tooltip>
+        <Tooltip title="Automatic-save history"><Button type="text" icon={<HistoryOutlined />} onClick={() => navigate(`/documents/${document.id}/autosave-history`)} /></Tooltip>
         <Popconfirm title="确定删除该文档？" onConfirm={async () => {
           await deleteDocument(document.id);
           message.success('文档已删除');
