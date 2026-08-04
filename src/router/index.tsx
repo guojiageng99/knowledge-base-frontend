@@ -4,6 +4,8 @@ import ProtectedRoute from './ProtectedRoute';
 import { PERMISSIONS } from '@/utils/permission';
 
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
+const ActivateAccountPage = lazy(() => import('@/pages/ActivateAccountPage'));
+const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const DocumentsPage = lazy(() => import('@/pages/DocumentsPage'));
 const DocumentEditorPage = lazy(() => import('@/pages/DocumentEditorPage'));
@@ -34,6 +36,8 @@ const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Suspense fallback={loading}><LoginPage /></Suspense> },
+  { path: '/activate', element: <Suspense fallback={loading}><ActivateAccountPage /></Suspense> },
+  { path: '/forgot-password', element: <Suspense fallback={loading}><ForgotPasswordPage /></Suspense> },
   { path: '/share/:shareId', element: <Suspense fallback={loading}><ShareViewerPage /></Suspense> },
   { path: '/ai', element: <ProtectedRoute><Suspense fallback={loading}><AIAssistantPage /></Suspense></ProtectedRoute> },
   { path: '/ai-writing', element: <ProtectedRoute><Suspense fallback={loading}><AIWritingPage /></Suspense></ProtectedRoute> },

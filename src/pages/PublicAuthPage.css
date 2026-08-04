@@ -1,0 +1,4 @@
+.public-auth-page { display: grid; min-height: 100vh; place-items: center; padding: 24px; background: #f4f7fb; }
+.public-auth-panel { width: min(100%, 480px); border-radius: 8px; box-shadow: 0 8px 28px rgb(27 43 65 / 12%); }
+.public-auth-loading { min-height: 260px; display: grid; place-content: center; justify-items: center; gap: 16px; }
+.public-auth-form { margin-top: 28px; }

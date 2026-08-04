@@ -131,6 +131,27 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  email: string;
+  realName: string;
+  phone?: string;
+  teamId?: number;
+}
+
+export interface RegisterResponse {
+  userId: number;
+  emailVerificationRequired: boolean;
+  message: string;
+  loginInfo?: LoginResponse;
+}
+
+export interface SendResetCodeRequest { email: string; }
+export interface VerifyResetCodeRequest { email: string; code: string; }
+export interface ResetPasswordRequest extends VerifyResetCodeRequest { newPassword: string; }
+
 export interface LoginUserInfo {
   userId: number;
   username: string;
