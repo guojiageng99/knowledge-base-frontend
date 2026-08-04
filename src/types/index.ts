@@ -23,6 +23,27 @@ export interface User {
   createTime?: string;
   updateTime?: string;
   roles?: string[];
+  permissions?: string[];
+}
+
+export type PermissionType = 'menu' | 'button' | 'api';
+
+export interface PermissionItem {
+  id: number;
+  name: string;
+  code: string;
+  type: PermissionType;
+  parentId: number;
+  menuUrl?: string;
+  apiUrl?: string;
+  method?: string;
+  icon?: string;
+  description?: string;
+  sortOrder?: number;
+  status: number;
+  children?: PermissionItem[];
+  createTime?: string;
+  updateTime?: string;
 }
 
 export interface SystemNotification {
@@ -96,6 +117,8 @@ export interface LoginUserInfo {
   email?: string;
   phone?: string | null;
   avatar?: string;
+  roles?: string[];
+  permissions?: string[];
 }
 
 export interface LoginResponse {
