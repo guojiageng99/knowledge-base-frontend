@@ -22,6 +22,30 @@ export interface User {
   lastLoginIp?: string;
   createTime?: string;
   updateTime?: string;
+  roles?: string[];
+}
+
+export interface SystemNotification {
+  id: string;
+  type: 'system' | 'comment' | 'mention' | 'review' | 'like';
+  title: string;
+  content: string;
+  link?: string;
+  relatedType?: string;
+  relatedId?: number;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface WsNotificationPayload {
+  eventType?: string;
+  notificationType: SystemNotification['type'];
+  title: string;
+  content: string;
+  link?: string;
+  documentId?: number | string;
+  documentTitle?: string;
+  timestamp?: string;
 }
 
 export interface UserStatistics {

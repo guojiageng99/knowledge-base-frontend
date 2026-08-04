@@ -1,12 +1,13 @@
-import { ApartmentOutlined, AppstoreOutlined, BarChartOutlined, ClockCircleOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SearchOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
+import { ApartmentOutlined, AppstoreOutlined, BarChartOutlined, BellOutlined, ClockCircleOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SearchOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useNotificationStore } from '@/stores';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const unreadCount = useNotificationStore((state) => state.unreadCount);
 
   const handleLogout = async () => {
     await logout();
@@ -19,6 +20,7 @@ export default function DashboardPage() {
         <Typography.Title level={4}>知识库</Typography.Title>
         <Space>
           <span><UserOutlined /> {user?.nickname || user?.realName || user?.username}</span>
+          <Badge count={unreadCount} size="small"><Button icon={<BellOutlined />} onClick={() => navigate('/notifications')}>Notifications</Button></Badge>
           <Button icon={<LogoutOutlined />} onClick={handleLogout}>退出</Button>
           <Button icon={<UserOutlined />} onClick={() => navigate('/profile')}>Profile</Button>
           <Button icon={<BarChartOutlined />} onClick={() => navigate('/admin/statistics')}>Statistics</Button>

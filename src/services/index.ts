@@ -4,3 +4,5 @@ export { default as searchService } from './search.service';
 export { default as fileManagementService } from './file-management.service';
 export { default as teamService } from './team.service';
 export { default as reviewService } from './review.service';
+export { default as notificationService } from './notification.service';
+export { default as webSocketService } from './websocket.service';

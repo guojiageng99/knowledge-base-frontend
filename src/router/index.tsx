@@ -24,6 +24,7 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const StatisticsPage = lazy(() => import('@/pages/StatisticsPage'));
 const ReviewPage = lazy(() => import('@/pages/ReviewPage'));
 const AIWritingPage = lazy(() => import('@/pages/AIWritingPage'));
+const NotificationCenterPage = lazy(() => import('@/pages/NotificationCenterPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -77,6 +78,7 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute><Suspense fallback={loading}><StatisticsPage /></Suspense></ProtectedRoute>,
   },
   { path: '/admin/reviews', element: <ProtectedRoute><Suspense fallback={loading}><ReviewPage /></Suspense></ProtectedRoute> },
+  { path: '/notifications', element: <ProtectedRoute><Suspense fallback={loading}><NotificationCenterPage /></Suspense></ProtectedRoute> },
   {
     path: '/drafts',
     element: <ProtectedRoute><Suspense fallback={loading}><DraftsPage /></Suspense></ProtectedRoute>,
