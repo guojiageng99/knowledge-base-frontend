@@ -49,6 +49,14 @@
 .import-main .ant-upload-drag { padding: 40px 20px; }
 .import-main .ant-upload-drag-icon { font-size: 56px; color: #1677ff; }
 .import-main .ant-progress { margin-top: 24px; }
+.graph-toolbar, .search-box { display: flex; gap: 12px; margin-bottom: 16px; }
+.graph-toolbar .ant-input, .search-box .ant-input { max-width: 640px; }
+.graph-summary { display: flex; gap: 20px; margin: 18px 0; color: #5f6b7a; }
+.graph-canvas { height: min(68vh, 680px); min-height: 440px; background: #fff; border: 1px solid #dfe6ea; }
+.graph-node-list { margin-top: 18px; }.graph-node { min-height: 74px; display: flex; align-items: center; gap: 12px; padding: 14px; background: #fff; border: 1px solid #dfe6ea; }.graph-node-dot { width: 12px; height: 12px; flex: 0 0 12px; border-radius: 50%; }
+.search-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 24px; margin-top: 24px; }.search-result-card { width: 100%; }.search-result-card .ant-card-head-title { white-space: normal; }.search-history { padding: 16px; align-self: start; background: #fff; border: 1px solid #dfe6ea; }
+.team-members { min-height: 240px; padding: 18px; background: #fff; border: 1px solid #dfe6ea; }.team-members .ant-typography { margin-top: 0; }
+.media-player { display: block; width: 100%; max-height: 62vh; }
 @media (max-width: 720px) {
   .workspace-header { padding: 0 16px; }
   .workspace-main, .editor-main, .detail-main { width: min(100% - 32px, 1200px); padding: 20px 0; }
@@ -59,6 +67,7 @@
   .document-editor-shell { grid-template-columns: 1fr; }
   .document-editor-pane, .document-preview-pane { min-height: 360px; border-right: 0; border-bottom: 1px solid #dfe6ea; }
   .management-grid { grid-template-columns: 1fr; }
+  .search-layout { grid-template-columns: 1fr; }.search-history { order: -1; }
   .import-main { width: calc(100% - 32px); padding: 20px 0; }
 }
 

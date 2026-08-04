@@ -1,4 +1,4 @@
-import { AppstoreOutlined, ClockCircleOutlined, FileTextOutlined, InboxOutlined, LogoutOutlined, StarOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
+import { ApartmentOutlined, AppstoreOutlined, ClockCircleOutlined, FileTextOutlined, FolderOpenOutlined, InboxOutlined, LogoutOutlined, RobotOutlined, SearchOutlined, StarOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Descriptions, Layout, Space, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
@@ -20,6 +20,10 @@ export default function DashboardPage() {
         <Space>
           <span><UserOutlined /> {user?.nickname || user?.realName || user?.username}</span>
           <Button icon={<LogoutOutlined />} onClick={handleLogout}>退出</Button>
+          <Button icon={<SearchOutlined />} onClick={() => navigate('/search')}>Search</Button>
+          <Button icon={<ApartmentOutlined />} onClick={() => navigate('/knowledge-graph')}>Knowledge graph</Button>
+          <Button icon={<FolderOpenOutlined />} onClick={() => navigate('/files')}>Files</Button>
+          <Button icon={<TeamOutlined />} onClick={() => navigate('/admin/teams')}>Teams</Button>
         </Space>
       </header>
       <main className="dashboard-main">

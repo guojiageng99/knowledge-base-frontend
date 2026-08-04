@@ -15,6 +15,10 @@ const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'));
 const RecentAccessPage = lazy(() => import('@/pages/RecentAccessPage'));
 const ShareViewerPage = lazy(() => import('@/pages/ShareViewerPage'));
 const AIAssistantPage = lazy(() => import('@/pages/AIAssistantPage'));
+const KnowledgeGraphPage = lazy(() => import('@/pages/KnowledgeGraphPage'));
+const SearchPage = lazy(() => import('@/pages/SearchPage'));
+const FileManagementPage = lazy(() => import('@/pages/FileManagementPage'));
+const TeamsPage = lazy(() => import('@/pages/TeamsPage'));
 
 const loading = <div style={{ padding: 24 }}>加载中...</div>;
 
@@ -66,5 +70,9 @@ export const router = createBrowserRouter([
     path: '/recent-access',
     element: <ProtectedRoute><Suspense fallback={loading}><RecentAccessPage /></Suspense></ProtectedRoute>,
   },
+  { path: '/knowledge-graph', element: <ProtectedRoute><Suspense fallback={loading}><KnowledgeGraphPage /></Suspense></ProtectedRoute> },
+  { path: '/search', element: <ProtectedRoute><Suspense fallback={loading}><SearchPage /></Suspense></ProtectedRoute> },
+  { path: '/files', element: <ProtectedRoute><Suspense fallback={loading}><FileManagementPage /></Suspense></ProtectedRoute> },
+  { path: '/admin/teams', element: <ProtectedRoute><Suspense fallback={loading}><TeamsPage /></Suspense></ProtectedRoute> },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

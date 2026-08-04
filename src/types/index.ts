@@ -248,3 +248,110 @@ export interface Citation {
   excerpt: string;
   relevanceScore: number;
 }
+
+export interface GraphNode {
+  id: string;
+  name: string;
+  type: string;
+  label?: string;
+  color?: string;
+  size?: number;
+  properties?: Record<string, unknown>;
+}
+
+export interface GraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  relation: string;
+  label?: string;
+  weight?: number;
+}
+
+export interface GraphData {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  nodeCount: number;
+  edgeCount: number;
+}
+
+export interface SearchChunkResult {
+  chunkId: string;
+  content: string;
+  heading?: string;
+  score?: number;
+  bm25Score?: number;
+  vectorScore?: number;
+}
+
+export interface SearchResult {
+  id: number;
+  title: string;
+  summary?: string;
+  highlights?: string[];
+  categoryName?: string;
+  tags?: string;
+  creatorName?: string;
+  publishAt?: string;
+  score?: number;
+  chunks?: SearchChunkResult[];
+}
+
+export interface SearchHistory {
+  id: number;
+  keyword: string;
+  searchCount: number;
+  createTime?: string;
+}
+
+export interface FileMetadata {
+  id: number;
+  originalName: string;
+  fileSize: number;
+  fileSizeReadable?: string;
+  fileType: string;
+  mimeType: string;
+  fileUrl?: string;
+  previewUrl?: string;
+  uploaderId?: number;
+  uploaderName?: string;
+  accessLevel?: number;
+  downloadCount?: number;
+  storageType?: string;
+  createTime?: string;
+  duration?: number;
+  resolution?: string;
+  bitrate?: number;
+  transcodeStatus?: 'PENDING' | 'PROCESSING' | 'DONE' | 'FAILED';
+  hlsPath?: string;
+  thumbnailPath?: string;
+}
+
+export interface Team {
+  id: number;
+  teamName: string;
+  teamCode: string;
+  description?: string;
+  leaderId?: number;
+  leaderName?: string;
+  parentId?: number;
+  parentName?: string;
+  level?: number;
+  path?: string;
+  memberCount: number;
+  docCount?: number;
+  status?: number;
+  sort?: number;
+  createTime?: string;
+  updateTime?: string;
+  children?: Team[];
+}
+
+export interface TeamMember {
+  userId: number;
+  username: string;
+  realName?: string;
+  avatar?: string;
+  role: string;
+  joinedAt?: string;
+}
