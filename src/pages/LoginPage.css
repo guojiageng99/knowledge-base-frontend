@@ -1,7 +1,7 @@
 :root {
-  color: #1c242e;
-  background: #f3f5f8;
-  font-family: Inter, "Microsoft YaHei", sans-serif;
+  color: #20231f;
+  background: #e9e6de;
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Microsoft YaHei", serif;
 }
 
 * { box-sizing: border-box; }
@@ -10,39 +10,78 @@ body { margin: 0; }
 
 .login-page {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(360px, 460px);
+  grid-template-columns: minmax(420px, 1.25fr) minmax(390px, 0.75fr);
   min-height: 100vh;
-  background: #eef2f5;
+  background: #e9e6de;
 }
 
 .login-intro {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 64px clamp(40px, 10vw, 160px);
-  background: #164a5d;
-  color: #fff;
+  min-height: 100vh;
+  padding: 46px clamp(44px, 8vw, 128px);
+  overflow: hidden;
+  color: #23271f;
+  background-color: #d9d2c2;
+  background-image: linear-gradient(90deg, rgb(59 69 49 / 9%) 1px, transparent 1px), linear-gradient(rgb(59 69 49 / 8%) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-.eyebrow { margin: 0 0 18px; color: #b5d6d8; font-size: 13px; letter-spacing: 2px; }
-.login-intro h1 { margin: 0; font-size: 48px; font-weight: 650; letter-spacing: 0; }
-.login-intro > p:last-child { max-width: 340px; margin: 18px 0 0; color: #d8e7e8; font-size: 18px; line-height: 1.7; }
+.login-intro::after {
+  position: absolute;
+  right: -84px;
+  bottom: -100px;
+  width: 390px;
+  height: 390px;
+  content: "";
+  border: 1px solid rgb(36 48 34 / 25%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 25px rgb(36 48 34 / 7%), 0 0 0 51px rgb(36 48 34 / 5%);
+}
+
+.login-brand { display: flex; align-items: center; gap: 10px; font-family: "Microsoft YaHei", sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+.login-brand .anticon { font-size: 21px; }
+.login-index { display: grid; gap: 9px; margin-top: clamp(62px, 13vh, 140px); font-family: "Microsoft YaHei", sans-serif; font-size: 12px; color: #636959; letter-spacing: 1px; }
+.login-intro-copy { position: relative; z-index: 1; margin: auto 0; }
+.eyebrow { margin: 0 0 18px; color: #657153; font-family: "Microsoft YaHei", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+.login-intro h1 { margin: 0; font-size: clamp(38px, 4vw, 62px); font-weight: 700; line-height: 1.24; letter-spacing: 0; }
+.login-intro-copy > p:last-child { max-width: 325px; margin: 24px 0 0; color: #4f564a; font-family: "Microsoft YaHei", sans-serif; font-size: 16px; line-height: 1.9; }
+.login-footnote { margin: 0; color: #68705f; font-family: "Microsoft YaHei", sans-serif; font-size: 12px; letter-spacing: 1px; }
 
 .login-card {
-  width: min(420px, calc(100% - 40px));
+  width: min(410px, calc(100% - 56px));
   align-self: center;
   justify-self: center;
-  border-radius: 8px;
-  box-shadow: 0 16px 40px rgb(26 51 63 / 16%);
+  border: 1px solid #d3d0c7;
+  border-radius: 2px;
+  box-shadow: 8px 8px 0 #cfcbc1;
+  background: #f8f7f2;
 }
 
-.login-card .ant-card-body { padding: 38px; }
-.login-card .ant-typography { margin-bottom: 8px; }
-.login-hint { margin: 24px 0; }
+.login-card .ant-card-body { padding: 42px 40px 36px; }
+.login-card .ant-typography { margin-bottom: 6px; }
+.login-card .ant-typography h3 { color: #252921; font-size: 27px; }
+.login-card .ant-typography-secondary { color: #74776e; font-family: "Microsoft YaHei", sans-serif; }
+.login-card .ant-tabs { margin-top: 25px; font-family: "Microsoft YaHei", sans-serif; }
+.login-card .ant-tabs-nav { margin-bottom: 22px; }
+.login-card .ant-tabs-tab { padding: 8px 4px; }
+.login-card .ant-tabs-ink-bar, .login-card .ant-btn-primary { background: #3e513b; }
+.login-card .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: #354a32; }
+.login-card .ant-form-item-label > label { color: #3d4239; font-size: 13px; }
+.login-card .ant-input-affix-wrapper, .login-card .ant-input, .login-card .ant-input-number { border-radius: 2px; border-color: #d7d6cf; background: #fffefb; }
+.login-card .ant-btn { border-radius: 2px; height: 38px; }
+.login-card .ant-btn-primary { border-color: #3e513b; font-weight: 600; }
+.login-card .ant-btn-link { color: #576d4e; }
+.login-hint { margin: 0 0 23px; border-radius: 2px; border-color: #d2dbc9; background: #eff3ea; color: #4a5a44; }
 
 @media (max-width: 760px) {
-  .login-page { grid-template-columns: 1fr; }
-  .login-intro { min-height: 34vh; padding: 40px 28px; }
-  .login-intro h1 { font-size: 36px; }
-  .login-card { margin: -24px 0 32px; }
+  .login-page { display: block; }
+  .login-intro { min-height: 38vh; padding: 30px 28px; }
+  .login-index, .login-footnote { display: none; }
+  .login-intro-copy { margin: auto 0 4px; }
+  .login-intro h1 { font-size: 35px; }
+  .login-intro-copy > p:last-child { margin-top: 12px; font-size: 14px; }
+  .login-card { display: block; margin: -14px auto 30px; }
+  .login-card .ant-card-body { padding: 32px 26px; }
 }
