@@ -16,6 +16,10 @@ export default function AIAssistantPage() {
   const [sendingFeedback, setSendingFeedback] = useState<string | number | null>(null);
   useEffect(() => { void fetchConversations(); void fetchModels(); }, [fetchConversations, fetchModels]);
   const messages = currentConversation?.messages ?? [];
+  useEffect(() => {
+    const element = document.querySelector<HTMLElement>('.ai-messages');
+    if (element) element.scrollTo({ top: element.scrollHeight, behavior: isStreaming ? 'auto' : 'smooth' });
+  }, [messages, currentResponse, isStreaming]);
   const quickQuestions = useMemo(() => ['如何创建一篇知识文档？', '知识库支持哪些功能？', '帮我总结一下知识库的使用流程'], []);
 
   const submit = async () => {

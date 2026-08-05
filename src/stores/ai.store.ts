@@ -46,8 +46,10 @@ export const useAIStore = create<AIState>((set, get) => ({
     const conversation = old ?? { id: '', title: content.slice(0, 30), messages: [] };
     set({ currentConversation: { ...conversation, messages: [...(conversation.messages ?? []), userMessage] } });
     let conversationId: string | number | undefined = old?.id || undefined; let messageId: string | number | undefined; let answer = ''; let citations: AIMessage['citations']; let fromKnowledgeBase = false;
+    let streamError: string | undefined;
     try {
-      await aiService.askStream({ question: content, conversationId, model: get().selectedModel, knowledgeBase: get().ragEnabled }, (chunk) => { answer += chunk; set({ currentResponse: answer }); }, (result) => { conversationId = result.conversationId; messageId = result.messageId; citations = result.citations; fromKnowledgeBase = result.fromKnowledgeBase ?? false; }, (error) => { throw new Error(error); });
+      await aiService.askStream({ question: content, conversationId, model: get().selectedModel, knowledgeBase: get().ragEnabled }, (chunk) => { answer += chunk; set({ currentResponse: answer }); }, (result) => { conversationId = result.conversationId; messageId = result.messageId; citations = result.citations; fromKnowledgeBase = result.fromKnowledgeBase ?? false; }, (error) => { streamError = error; });
+      if (streamError) throw new Error(streamError);
       const assistant: AIMessage = { id: messageId ?? `local-${Date.now()}-answer`, role: 'assistant', content: answer, timestamp: new Date().toISOString(), citations, fromKnowledgeBase };
       set((s) => { const current = s.currentConversation; if (!current) return {}; const updated = { ...current, id: conversationId ?? current.id, messages: [...(current.messages ?? []), assistant] }; return { currentConversation: updated, conversations: [updated, ...s.conversations.filter((c) => String(c.id) !== String(updated.id))], isLoading: false, isStreaming: false, currentResponse: '' }; });
     } catch (error) { set({ isLoading: false, isStreaming: false, currentResponse: '' }); throw error; }

@@ -14,6 +14,16 @@ export interface AIStreamResult {
   fromKnowledgeBase?: boolean;
 }
 
+export function createBatchedCallback(onFlush: (value: string) => void, interval = 80) {
+  let pending = '';
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const flush = () => { if (!pending) return; const value = pending; pending = ''; onFlush(value); };
+  return {
+    push(value: string) { pending += value; if (!timer) timer = setTimeout(() => { timer = undefined; flush(); }, interval); },
+    flush() { if (timer) { clearTimeout(timer); timer = undefined; } flush(); },
+  };
+}
+
 async function unwrap<T>(request: Promise<AxiosResponse<T> | T>): Promise<T> {
   const response = await request;
   return (response as AxiosResponse<T>).data ?? response as T;
@@ -47,21 +57,29 @@ export const aiService = {
     const decoder = new TextDecoder();
     let buffer = '';
     let event = '';
+    let dataLines: string[] = [];
+    const batched = createBatchedCallback(onMessage);
+    const dispatch = () => {
+      if (!dataLines.length) return;
+      const payload = dataLines.join('\n'); dataLines = [];
+      if (event === 'message') batched.push(payload);
+      else if (event === 'done') { if (payload === '[DONE]') { batched.flush(); return; } try { batched.flush(); onDone(JSON.parse(payload) as AIStreamResult); } catch { onError('Invalid AI stream completion response'); } }
+      else if (event === 'error') onError(payload);
+    };
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) { buffer += decoder.decode(); break; }
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop() ?? '';
       for (const line of lines) {
+        if (!line.trim()) { dispatch(); event = ''; continue; }
         if (line.startsWith('event:')) { event = line.slice(6).trim(); continue; }
-        if (!line.startsWith('data:')) continue;
-        const payload = line.startsWith('data: ') ? line.slice(6) : line.slice(5);
-        if (event === 'message') onMessage(payload);
-        else if (event === 'done') { try { onDone(JSON.parse(payload) as AIStreamResult); } catch { onError('Invalid AI stream completion response'); } }
-        else if (event === 'error') onError(payload);
+        if (line.startsWith('data:')) dataLines.push(line.startsWith('data: ') ? line.slice(6) : line.slice(5));
       }
     }
+    if (buffer.trim() && buffer.startsWith('data:')) dataLines.push(buffer.startsWith('data: ') ? buffer.slice(6) : buffer.slice(5));
+    dispatch(); batched.flush();
   },
   getWritingTemplates: (): Promise<WritingTemplate[]> => unwrap(http.get<WritingTemplate[]>('/ai/writing/templates')),
   generateWriting: (data: WritingRequest): Promise<WritingResult> => unwrap(http.post<WritingResult>('/ai/writing/generate', { ...data, actionType: 'generate' })),
