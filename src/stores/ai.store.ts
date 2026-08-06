@@ -23,7 +23,7 @@ interface AIState {
 }
 
 export const useAIStore = create<AIState>((set, get) => ({
-  conversations: [], currentConversation: null, availableModels: [], selectedModel: 'qwen', isAvailable: true,
+  conversations: [], currentConversation: null, availableModels: [], selectedModel: 'openai', isAvailable: true,
   isLoading: false, isStreaming: false, currentResponse: '', ragEnabled: false,
   fetchConversations: async () => {
     set({ isLoading: true });

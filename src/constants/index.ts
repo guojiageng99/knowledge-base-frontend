@@ -1,7 +1,6 @@
 export const AI_CONFIG = {
-  DEFAULT_MODEL: 'qwen',
+  DEFAULT_MODEL: 'openai',
   MODELS: {
-    qwen: { key: 'qwen', displayName: '通义千问', description: '阿里云大语言模型' },
-    deepseek: { key: 'deepseek', displayName: 'DeepSeek', description: '擅长代码生成和深度推理' },
+    openai: { key: 'openai', displayName: 'OpenAI 兼容模型', description: '通过 OpenAI 兼容接口接入的模型' },
   },
 } as const;
