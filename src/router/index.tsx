@@ -12,6 +12,7 @@ const DocumentEditorPage = lazy(() => import('@/pages/DocumentEditorPage'));
 const AutoSaveHistoryPage = lazy(() => import('@/pages/AutoSaveHistoryPage'));
 const DocumentDetailPage = lazy(() => import('@/pages/DocumentDetailPage'));
 const CategoriesPage = lazy(() => import('@/pages/CategoriesPage'));
+const TagsPage = lazy(() => import('@/pages/TagsPage'));
 const UsersPage = lazy(() => import('@/pages/UsersPage'));
 const ImportDocumentPage = lazy(() => import('@/pages/ImportDocumentPage'));
 const DraftsPage = lazy(() => import('@/pages/DraftsPage'));
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
     path: '/categories',
     element: <ProtectedRoute><Suspense fallback={loading}><CategoriesPage /></Suspense></ProtectedRoute>,
   },
+  { path: '/tags', element: <ProtectedRoute><Suspense fallback={loading}><TagsPage /></Suspense></ProtectedRoute> },
   {
     path: '/users',
     element: <ProtectedRoute><Suspense fallback={loading}><UsersPage /></Suspense></ProtectedRoute>,

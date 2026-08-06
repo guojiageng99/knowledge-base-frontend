@@ -21,6 +21,7 @@ const primaryItems = [
   { key: '/', icon: <BookOutlined />, label: '工作台' },
   { key: '/documents', icon: <FileTextOutlined />, label: '文档' },
   { key: '/categories', icon: <AppstoreOutlined />, label: '分类' },
+  { key: '/tags', icon: <AppstoreOutlined />, label: '标签' },
   { key: '/search', icon: <SearchOutlined />, label: '检索' },
 ];
 

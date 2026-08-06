@@ -111,8 +111,8 @@ export interface DashboardData { overview: StatisticsOverview; documentTrend: Tr
 export interface StatisticsQueryParams { startDate?: string; endDate?: string; trendType?: 'create' | 'view'; rankType?: 'view' | 'like' | 'favorite'; userRankType?: 'create' | 'comment' | 'view'; limit?: number; }
 
 export interface CategoryTree {
-  id: number;
-  parentId: number;
+  id: string;
+  parentId: string;
   name: string;
   code?: string;
   description?: string;
@@ -124,6 +124,32 @@ export interface CategoryTree {
   createTime?: string;
   updateTime?: string;
   children?: CategoryTree[];
+}
+
+export interface TagItem {
+  id: string;
+  tagName: string;
+  tagCode?: string;
+  categoryId?: string;
+  categoryName?: string;
+  tagType?: number;
+  color?: string;
+  icon?: string;
+  docCount?: number;
+  status?: number;
+  createdAt?: string;
+}
+
+export interface DocumentVersion {
+  id: string;
+  documentId: string;
+  version: number;
+  title?: string;
+  changeDescription?: string;
+  changeSize?: number;
+  operatorId?: string;
+  operatorName?: string;
+  createdAt?: string;
 }
 
 export interface LoginRequest {
@@ -188,14 +214,14 @@ export interface DocumentAuthor {
 }
 
 export interface KnowledgeDocument {
-  id: number;
+  id: string;
   title: string;
   summary?: string;
   content?: string;
   contentLength?: number;
   wordCount?: number;
   documentType: number;
-  categoryId?: number;
+  categoryId?: string;
   categoryName?: string;
   tags?: string;
   status: number;
@@ -222,7 +248,7 @@ export interface KnowledgeDocument {
 export interface DocumentFilter {
   current?: number;
   size?: number;
-  categoryId?: number;
+  categoryId?: string;
   keyword?: string;
   status?: number;
   isPublic?: number;
@@ -233,7 +259,7 @@ export interface DocumentForm {
   summary?: string;
   content?: string;
   documentType?: number;
-  categoryId?: number;
+  categoryId?: string;
   tags?: string;
   status?: number;
   isTop?: number;
@@ -245,18 +271,18 @@ export interface DocumentForm {
 }
 
 export interface AutoSaveDocumentForm {
-  id?: number;
+  id?: string;
   title?: string;
   content?: string;
   summary?: string;
-  categoryId?: number;
+  categoryId?: string;
   teamId?: number;
   tags?: string;
 }
 
 export interface AutoSaveHistoryItem {
   id: string;
-  documentId: number;
+  documentId: string;
   title: string;
   contentPreview?: string;
   content?: string;
@@ -302,10 +328,10 @@ export interface BatchExportRequest {
 }
 
 export interface Comment {
-  id: number;
-  documentId: number;
-  parentId: number;
-  rootId: number;
+  id: string;
+  documentId: string;
+  parentId: string;
+  rootId: string;
   content: string;
   commenterId: number;
   commenterName?: string;
@@ -321,7 +347,7 @@ export interface Comment {
 }
 
 export interface CommentCreateForm {
-  documentId: number;
+  documentId: string;
   content: string;
   parentId?: number;
   replyToUserId?: number;
@@ -345,7 +371,7 @@ export interface CommentPage {
 export interface UserFavorite {
   id: number;
   userId: number;
-  documentId: number;
+  documentId: string;
   documentTitle: string;
   documentSummary?: string;
   documentCategoryId?: number;
@@ -361,7 +387,7 @@ export interface UserFavorite {
 export interface DocumentAccess {
   id: number;
   userId: number;
-  documentId: number;
+  documentId: string;
   documentTitle: string;
   summary?: string;
   categoryName?: string;
@@ -373,7 +399,7 @@ export interface DocumentAccess {
 export interface ShareVO {
   shareId: string;
   shareUrl: string;
-  documentId: number;
+  documentId: string;
   title: string;
   shareType: number;
   shareTypeDesc: string;
@@ -389,7 +415,7 @@ export interface ShareVO {
 }
 
 export interface ShareForm {
-  documentId: number;
+  documentId: string;
   shareType?: number;
   expireType?: number;
   expireTime?: string;

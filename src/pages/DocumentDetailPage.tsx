@@ -1,4 +1,4 @@
-import { CommentOutlined, CopyOutlined, DownloadOutlined, EditOutlined, LikeFilled, LikeOutlined, ReloadOutlined, RobotOutlined, ShareAltOutlined, StarFilled, StarOutlined, StopOutlined } from '@ant-design/icons';
+import { CommentOutlined, CopyOutlined, DownloadOutlined, EditOutlined, HistoryOutlined, LikeFilled, LikeOutlined, ReloadOutlined, RobotOutlined, ShareAltOutlined, StarFilled, StarOutlined, StopOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Divider, Form, Input, Layout, List, Modal, Select, Space, Spin, Tag, Typography, message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -9,6 +9,8 @@ import { useFavoriteStore } from '@/stores';
 import { documentService } from '@/services/document.service';
 import { commentService } from '@/services/comment.service';
 import aiService from '@/services/ai.service';
+import versionService from '@/services/version.service';
+import type { DocumentVersion } from '@/types';
 import type { Comment, ShareForm, ShareVO } from '@/types';
 
 function statusLabel(status: number) {
@@ -20,7 +22,7 @@ function statusLabel(status: number) {
 export default function DocumentDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const documentId = Number(id);
+  const documentId = id;
   const { currentDocument, isLoading, fetchDocument, likeDocument, updateFavoriteStatus } = useDocumentStore();
   const { toggleFavorite, checkFavorite, isFavorited } = useFavoriteStore();
   const favorite = currentDocument ? isFavorited(currentDocument.id) : false;
@@ -35,6 +37,11 @@ export default function DocumentDetailPage() {
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [streamedSummary, setStreamedSummary] = useState('');
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [versionsVisible, setVersionsVisible] = useState(false);
+  const [versions, setVersions] = useState<DocumentVersion[]>([]);
+  const [versionsLoading, setVersionsLoading] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareResult, setCompareResult] = useState<string>();
   const summaryAbortRef = useRef<AbortController | null>(null);
   const isSummarizingRef = useRef(false);
 
@@ -181,6 +188,39 @@ export default function DocumentDetailPage() {
     }
   };
 
+  const openVersions = async () => {
+    if (!documentId) return;
+    setVersionsVisible(true);
+    setVersionsLoading(true);
+    try {
+      const page = await versionService.page(documentId);
+      setVersions(page.records ?? []);
+    } finally {
+      setVersionsLoading(false);
+    }
+  };
+
+  const restoreVersion = (versionId: string) => {
+    if (!documentId) return;
+    Modal.confirm({
+      title: '恢复这个正式版本吗？',
+      content: '恢复后会把当前文档内容切换为该版本，并保留现有版本记录。',
+      okText: '确认恢复',
+      cancelText: '取消',
+      onOk: async () => {
+        await versionService.restore(documentId, versionId, '从文档详情页恢复');
+        message.success('版本已恢复');
+        setVersionsVisible(false);
+        await fetchDocument(documentId, true);
+      },
+    });
+  };
+
+  const compareVersions = async () => {
+    if (!documentId || compareIds.length !== 2) return;
+    setCompareResult(await versionService.compare(documentId, compareIds[0], compareIds[1]));
+  };
+
   if (isLoading || !currentDocument) return <div className="page-spinner"><Spin /></div>;
 
   return (
@@ -197,6 +237,7 @@ export default function DocumentDetailPage() {
             </Button>
             <Button icon={<DownloadOutlined />} onClick={() => void downloadPdf()}>Download PDF</Button>
             <Button icon={<ShareAltOutlined />} onClick={() => void openShare()}>Share</Button>
+            <Button icon={<HistoryOutlined />} onClick={() => void openVersions()}>版本历史</Button>
             <Button type="primary" icon={isSummarizing ? <StopOutlined /> : currentDocument.summary ? <ReloadOutlined /> : <RobotOutlined />} onClick={isSummarizing ? stopSummary : () => void handleGenerateSummary()}>{isSummarizing ? '停止摘要' : currentDocument.summary ? '重新生成摘要' : 'AI生成摘要'}</Button>
             <Button icon={<EditOutlined />} onClick={() => { const title = encodeURIComponent(currentDocument.title || ''); const content = encodeURIComponent((currentDocument.content || '').slice(0, 500)); navigate(`/ai-writing?title=${title}&content=${content}`); }}>AI写作</Button>
           </div>
@@ -250,6 +291,17 @@ export default function DocumentDetailPage() {
           </section>}
         </article>
       </main>
+      <Modal title="正式版本历史" open={versionsVisible} onCancel={() => setVersionsVisible(false)} footer={null} width={760} destroyOnClose>
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Space wrap>
+            <Typography.Text type="secondary">选择两个版本后可对比：</Typography.Text>
+            <Select mode="multiple" value={compareIds} onChange={setCompareIds} maxCount={2} style={{ minWidth: 320 }} placeholder="选择版本" options={versions.map((item) => ({ value: item.id, label: `v${item.version} ${item.createdAt || ''}` }))} />
+            <Button disabled={compareIds.length !== 2} onClick={() => void compareVersions()}>对比</Button>
+          </Space>
+          {compareResult && <Typography.Paragraph style={{ whiteSpace: 'pre-wrap', maxHeight: 220, overflow: 'auto' }}>{compareResult}</Typography.Paragraph>}
+          <List loading={versionsLoading} dataSource={versions} locale={{ emptyText: '暂无正式版本记录' }} renderItem={(item) => <List.Item actions={[<Button key="restore" onClick={() => restoreVersion(item.id)}>恢复</Button>]}><List.Item.Meta title={`版本 v${item.version} ${item.title || ''}`} description={`${item.changeDescription || '未填写变更说明'} · ${item.operatorName || '系统用户'} · ${item.createdAt || ''}`} /></List.Item>} />
+        </Space>
+      </Modal>
       <Modal title="Share document" open={shareVisible} onCancel={() => setShareVisible(false)} footer={null} width={640} destroyOnClose>
         <Form form={shareForm} layout="vertical" onFinish={(values) => void createShare(values)} initialValues={{ shareType: 1, expireType: 1, accessLimit: 0, requirePassword: 0 }}>
           <Form.Item name="shareType" label="Share type"><Select options={[{ value: 1, label: 'Public link' }, { value: 2, label: 'Private share' }]} /></Form.Item>
