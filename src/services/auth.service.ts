@@ -19,6 +19,10 @@ export const authService = {
     return unwrap<string>(http.get('/auth/auth/verify-email', { params: { token }, skipAuth: true }));
   },
 
+  acceptInvite(data: { token: string; password: string; confirmPassword: string }): Promise<string> {
+    return unwrap<string>(http.post('/auth/auth/accept-invite', data, { skipAuth: true }));
+  },
+
   sendResetCode(data: SendResetCodeRequest): Promise<void> {
     return unwrap<void>(http.post('/auth/auth/password/reset/send-code', data, { skipAuth: true }));
   },
