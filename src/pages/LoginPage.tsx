@@ -1,5 +1,5 @@
 import { BookOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { Alert, Button, Card, Form, Input, InputNumber, Tabs, Typography, message } from 'antd';
+import { Button, Card, Form, Input, InputNumber, Tabs, Typography, message } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '@/services/auth.service';
@@ -75,7 +75,6 @@ export default function LoginPage() {
         <Tabs items={[
           {
             key: 'login', label: '登录', children: <>
-              <Alert className="login-hint" message="初始管理员：admin / 123456" type="info" showIcon />
               <Form<LoginForm> layout="vertical" onFinish={handleLogin} requiredMark={false} autoComplete="on">
                 <Form.Item label="账号" name="username" rules={[{ required: true, message: '请输入账号' }]}><Input prefix={<UserOutlined />} placeholder="用户名或邮箱" autoFocus /></Form.Item>
                 <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}><Input.Password prefix={<LockOutlined />} placeholder="输入密码" /></Form.Item>
