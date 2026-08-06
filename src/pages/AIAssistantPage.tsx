@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined, SendOutlined, RobotOutlined, UserOutlined, LikeOutlined, DislikeOutlined } from '@ant-design/icons';
-import { Button, Empty, Input, Layout, List, Select, Space, Switch, Tag, Tooltip, Typography, message } from 'antd';
+import { Alert, Button, Empty, Input, Layout, List, Select, Space, Switch, Tag, Tooltip, Typography, message } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,7 +10,7 @@ import type { AIMessage } from '@/types';
 const { Sider, Content, Header } = Layout;
 
 export default function AIAssistantPage() {
-  const { conversations, currentConversation, availableModels, selectedModel, isLoading, isStreaming, currentResponse,
+  const { conversations, currentConversation, availableModels, selectedModel, isLoading, isStreaming, currentResponse, isAvailable,
     fetchConversations, fetchModels, createConversation, selectConversation, deleteConversation, sendMessage, setSelectedModel, ragEnabled, toggleRag } = useAIStore();
   const [input, setInput] = useState('');
   const [sendingFeedback, setSendingFeedback] = useState<string | number | null>(null);
@@ -40,10 +40,10 @@ export default function AIAssistantPage() {
       </List.Item>} />
     </Sider>
     <Content className="ai-content">
-      <Header className="ai-header"><Space><RobotOutlined /><Typography.Title level={4}>AI知识库助手</Typography.Title></Space><Space><Tooltip title={ragEnabled ? '关闭知识库搜索' : '开启知识库搜索'}><Switch checked={ragEnabled} onChange={toggleRag} checkedChildren="知识库" unCheckedChildren="通用" /></Tooltip><Select value={selectedModel} options={availableModels.map((m) => ({ value: m.key, label: m.displayName }))} onChange={setSelectedModel} placeholder="选择模型" /></Space></Header>
+      <Header className="ai-header"><Space><RobotOutlined /><Typography.Title level={4}>AI知识库助手</Typography.Title></Space><Space><Tooltip title={ragEnabled ? '关闭知识库搜索' : '开启知识库搜索'}><Switch checked={ragEnabled} onChange={toggleRag} checkedChildren="知识库" unCheckedChildren="通用" disabled={!isAvailable} /></Tooltip><Select value={selectedModel} options={availableModels.map((m) => ({ value: m.key, label: m.displayName }))} onChange={setSelectedModel} placeholder="选择模型" disabled={!isAvailable} /></Space></Header>
       <main className="ai-chat-shell">
-        <div className="ai-messages">{messages.length === 0 && !isStreaming ? <Empty description={<Space direction="vertical"><span>你好，我是知识库AI助手</span><Space wrap>{quickQuestions.map((question) => <Button key={question} onClick={() => setInput(question)}>{question}</Button>)}</Space></Space>} /> : messages.map((item) => <MessageBubble key={String(item.id)} item={item} onFeedback={feedback} feedbackLoading={sendingFeedback === item.id} />)}{isStreaming && <MessageBubble item={{ id: 'streaming', role: 'assistant', content: currentResponse || '正在思考…' }} />}</div>
-        <div className="ai-input-area"><Input.TextArea value={input} onChange={(e) => setInput(e.target.value)} onPressEnter={(e) => { if (!e.shiftKey) { e.preventDefault(); void submit(); } }} placeholder="输入你的问题，按 Enter 发送" autoSize={{ minRows: 2, maxRows: 6 }} disabled={isLoading} /><Button type="primary" icon={<SendOutlined />} onClick={() => void submit()} loading={isLoading}>发送</Button></div>
+        <div className="ai-messages">{!isAvailable ? <Alert type="warning" showIcon message="AI 服务暂不可用" description="请完成 AI 服务部署并配置模型 API Key 后再使用。" /> : messages.length === 0 && !isStreaming ? <Empty description={<Space direction="vertical"><span>你好，我是知识库AI助手</span><Space wrap>{quickQuestions.map((question) => <Button key={question} onClick={() => setInput(question)}>{question}</Button>)}</Space></Space>} /> : messages.map((item) => <MessageBubble key={String(item.id)} item={item} onFeedback={feedback} feedbackLoading={sendingFeedback === item.id} />)}{isStreaming && <MessageBubble item={{ id: 'streaming', role: 'assistant', content: currentResponse || '正在思考…' }} />}</div>
+        <div className="ai-input-area"><Input.TextArea value={input} onChange={(e) => setInput(e.target.value)} onPressEnter={(e) => { if (!e.shiftKey) { e.preventDefault(); void submit(); } }} placeholder={isAvailable ? '输入你的问题，按 Enter 发送' : 'AI 服务暂不可用'} autoSize={{ minRows: 2, maxRows: 6 }} disabled={isLoading || !isAvailable} /><Button type="primary" icon={<SendOutlined />} onClick={() => void submit()} loading={isLoading} disabled={!isAvailable}>发送</Button></div>
       </main>
     </Content>
   </Layout>;

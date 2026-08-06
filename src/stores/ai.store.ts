@@ -11,6 +11,7 @@ interface AIState {
   isStreaming: boolean;
   currentResponse: string;
   ragEnabled: boolean;
+  isAvailable: boolean;
   fetchConversations: () => Promise<void>;
   fetchModels: () => Promise<void>;
   createConversation: (title: string) => Promise<void>;
@@ -22,14 +23,14 @@ interface AIState {
 }
 
 export const useAIStore = create<AIState>((set, get) => ({
-  conversations: [], currentConversation: null, availableModels: [], selectedModel: 'qwen',
+  conversations: [], currentConversation: null, availableModels: [], selectedModel: 'qwen', isAvailable: true,
   isLoading: false, isStreaming: false, currentResponse: '', ragEnabled: false,
   fetchConversations: async () => {
     set({ isLoading: true });
-    try { set({ conversations: await aiService.getConversations() }); } finally { set({ isLoading: false }); }
+    try { set({ conversations: await aiService.getConversations(), isAvailable: true }); } catch { set({ conversations: [], isAvailable: false }); } finally { set({ isLoading: false }); }
   },
   fetchModels: async () => {
-    try { const models = await aiService.getModels(); set({ availableModels: models, selectedModel: models.find((m) => m.isDefault)?.key ?? get().selectedModel }); } catch { /* keys may be absent until API credentials are configured */ }
+    try { const models = await aiService.getModels(); set({ availableModels: models, selectedModel: models.find((m) => m.isDefault)?.key ?? get().selectedModel, isAvailable: true }); } catch { set({ isAvailable: false }); }
   },
   createConversation: async (title) => { const conversation = await aiService.createConversation(title); set((s) => ({ conversations: [conversation, ...s.conversations], currentConversation: conversation })); },
   selectConversation: async (conversation) => {

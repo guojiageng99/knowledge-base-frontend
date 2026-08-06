@@ -3,10 +3,24 @@ import { message } from 'antd';
 import type { ApiResponse } from '@/types';
 import { tokenStorage } from '@/utils/token-storage';
 
+/**
+ * JavaScript cannot precisely represent the 19-digit Snowflake IDs returned by
+ * the backend. Preserve every unsafe integer as a string before JSON parsing.
+ */
+function parseApiResponse(data: unknown) {
+  if (typeof data !== 'string' || !data) return data;
+  try {
+    return JSON.parse(data.replace(/(:\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'));
+  } catch {
+    return data;
+  }
+}
+
 declare module 'axios' {
   export interface AxiosRequestConfig {
     skipAuth?: boolean;
     download?: boolean;
+    silentError?: boolean;
   }
 }
 
@@ -14,6 +28,7 @@ const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? '/api',
   timeout: Number(import.meta.env.VITE_API_TIMEOUT ?? 30000),
   withCredentials: false,
+  transformResponse: [parseApiResponse],
 });
 
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
@@ -40,7 +55,7 @@ http.interceptors.response.use(
       tokenStorage.clearToken();
       if (window.location.pathname !== '/login') window.location.replace('/login');
     }
-    message.error(errorMessage);
+    if (!error.config?.silentError) message.error(errorMessage);
     return Promise.reject(error);
   },
 );

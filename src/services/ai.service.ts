@@ -30,11 +30,11 @@ async function unwrap<T>(request: Promise<AxiosResponse<T> | T>): Promise<T> {
 }
 
 export const aiService = {
-  getModels: (): Promise<AIModelOption[]> => unwrap(http.get<AIModelOption[]>('/ai/chat/models')),
+  getModels: (): Promise<AIModelOption[]> => unwrap(http.get<AIModelOption[]>('/ai/chat/models', { silentError: true })),
   ask: (data: AIRequest): Promise<{ content: string; conversationId: string; messageId: string; tokens: number }> =>
     unwrap(http.post('/ai/chat', { content: data.question, conversationId: data.conversationId, model: data.model })),
   getConversations: async (): Promise<AIConversation[]> => {
-    const page = await unwrap(http.get<{ records: AIConversation[] }>('/ai/conversation/list'));
+    const page = await unwrap(http.get<{ records: AIConversation[] }>('/ai/conversation/list', { silentError: true }));
     return page?.records ?? [];
   },
   getConversation: (id: string | number): Promise<AIConversation> => unwrap(http.get(`/ai/conversation/${id}`)),
